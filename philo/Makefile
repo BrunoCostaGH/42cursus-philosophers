@@ -6,21 +6,21 @@
 #    By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/16 12:38:11 by bsilva-c          #+#    #+#              #
-#    Updated: 2023/03/16 12:45:23 by bsilva-c         ###   ########.fr        #
+#    Updated: 2023/03/16 13:28:12 by bsilva-c         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC=cc
-CFLAGS=-Wall -Werror -Wextra -pthread
+CFLAGS=-Wall -Werror -Wextra
 DEPS=
 
-SRCS=main.c
+SRCS=main.c ft_atoi.c
 OBJS=$(SRCS:.c=.o)
 NAME=philo
 
 all: $(NAME)
 $(NAME): $(OBJS) $(DEPS)
-	$(CC) $(OBJS) $(DEPS) -o $(NAME)
+	@$(CC) $(OBJS) $(DEPS) -pthread -o $(NAME)
 clean:
 	@rm $(OBJS)
 fclean: clean

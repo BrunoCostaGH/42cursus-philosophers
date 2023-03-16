@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/15 19:29:31 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/16 13:38:17 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,11 @@ Any other philosopher number N sits between philosopher number N - 1 and
 philosopher number N + 1.
 */
 
+/*
+	gettimeofday gets time in seconds and microseconds.
+		Converts the seconds into microseconds for same unit calculation.
+		Subtracts initial time to current time for current time stamp.
+*/
 int	timestamp(void)
 {
 	int						ml_cur;
@@ -50,23 +55,26 @@ int	timestamp(void)
 	if (!ini_tv.tv_sec)
 		gettimeofday(&ini_tv, NULL);
 	gettimeofday(&cur_tv, NULL);
-	ml_cur = (cur_tv.tv_sec * 1000 + cur_tv.tv_usec);
-	ml_ini = (ini_tv.tv_sec * 1000 + ini_tv.tv_usec);
-	return ((ml_cur - ml_ini));
+	ml_cur = (cur_tv.tv_sec * 1000000 + cur_tv.tv_usec);
+	ml_ini = (ini_tv.tv_sec * 1000000 + ini_tv.tv_usec);
+	return ((ml_cur - ml_ini) * 0.001);
 }
 
 void	*thinking(void *arg)
 {
+	(void)arg;
 	return (0);
 }
 
 void	*eating(char *time_to_die)
 {
+	(void)time_to_die;
 	return (0);
 }
 
 void	*sleeping(void *arg)
 {
+	(void)arg;
 	return (0);
 }
 
@@ -77,25 +85,24 @@ void	*sleeping(void *arg)
 	argv[4] = time_to_sleep;
 	argv[5] = number_of_times_each_philosopher_must_eat; *optional
 */
-int	main(int argc, char *argv)
+int	main(int argc, char **argv)
 {
+	int				i;
 	int				philo_amount;
 	pthread_t		*th;
 
-	if (argc >= 4 && argv[1] > 0)
+	timestamp();
+	if (argc >= 4)
 	{
-		timestamp();
-		printf("%ld %d is thinking...\n", timestamp(), 0);
-		philo_amount = 0;
-		th = malloc(argv[1] * sizeof(pthread_t));
-		while (philo_amount != argv[1])
+		i = 0;
+		philo_amount = ft_atoi(argv[1]);
+		th = malloc(philo_amount * sizeof(pthread_t));
+		while (i != philo_amount)
 		{
-			if (pthread_create(&th[philo_amount], NULL, &thinking, &argv[2]))
+			if (pthread_create(&th[i], NULL, &thinking, &argv[2]))
 				return (1);
-			philo_amount++;
+			i++;
 		}
-		usleep(1200000);
-		printf("%ld %d is thinking...\n", timestamp(), 0);
 		free(th);
 	}
 	return (0);
