@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/16 13:38:17 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/16 17:28:04 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,65 +45,60 @@ philosopher number N + 1.
 		Converts the seconds into microseconds for same unit calculation.
 		Subtracts initial time to current time for current time stamp.
 */
-int	timestamp(void)
-{
-	int						ml_cur;
-	int						ml_ini;
-	struct timeval			cur_tv;
-	static struct timeval	ini_tv;
 
-	if (!ini_tv.tv_sec)
-		gettimeofday(&ini_tv, NULL);
-	gettimeofday(&cur_tv, NULL);
-	ml_cur = (cur_tv.tv_sec * 1000000 + cur_tv.tv_usec);
-	ml_ini = (ini_tv.tv_sec * 1000000 + ini_tv.tv_usec);
-	return ((ml_cur - ml_ini) * 0.001);
-}
-
-void	*thinking(void *arg)
+void	*routine(void *arg)
 {
-	(void)arg;
+	static int	i;
+	t_master	*master;
+
+	master = (t_master *)arg;
+	pthread_mutex_lock(&master->mutex_routine);
+	printf("Ï-m locked!!");
+	if (!i)
+		i = 0;
+	pthread_mutex_unlock(&master->mutex_routine);
+	printf("Ï-m unlocked!!");
 	return (0);
 }
 
-void	*eating(char *time_to_die)
+void	thinking(void)
 {
-	(void)time_to_die;
-	return (0);
+	return ;
 }
 
-void	*sleeping(void *arg)
+void	eating(void)
 {
-	(void)arg;
-	return (0);
+	return ;
 }
 
-/*
-	argv[1] = number_of_philosophers;
-	argv[2] = time_to_die;
-	argv[3] = time_to_eat;
-	argv[4] = time_to_sleep;
-	argv[5] = number_of_times_each_philosopher_must_eat; *optional
-*/
+void	sleeping(void)
+{
+	return ;
+}
+
 int	main(int argc, char **argv)
 {
 	int				i;
-	int				philo_amount;
-	pthread_t		*th;
+	t_master		*master;
 
-	timestamp();
 	if (argc >= 4)
 	{
 		i = 0;
-		philo_amount = ft_atoi(argv[1]);
-		th = malloc(philo_amount * sizeof(pthread_t));
-		while (i != philo_amount)
+		master = master_init(argv);
+		pthread_mutex_init(&master->mutex_routine, NULL);
+		while (i != master->number_of_philosophers)
 		{
-			if (pthread_create(&th[i], NULL, &thinking, &argv[2]))
-				return (1);
+			if (pthread_create(&master->thread[i], NULL, &routine, &master))
+				return (-1);
 			i++;
 		}
-		free(th);
+		while (--i)
+		{
+			if (pthread_join(master->thread[i], NULL))
+				return (-1);
+		}
+		pthread_mutex_destroy(&master->mutex_routine);
+		free_master(master);
 	}
 	return (0);
 }
