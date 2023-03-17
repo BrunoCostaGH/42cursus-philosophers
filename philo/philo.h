@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:21:25 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/16 17:16:21 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/17 15:48:56 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,12 @@
 #  define FALSE 0
 # endif
 
+typedef struct s_fork
+{
+	int				is_being_used;
+	pthread_mutex_t	mutex_fork;
+}	t_fork;
+
 typedef struct s_philo
 {
 	int	is_alive;
@@ -42,8 +48,10 @@ typedef struct s_master
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				number_of_times_each_philosopher_must_eat;
+	int				philo_id_temp;
 	pthread_t		*thread;
 	struct s_philo	**philo_table;
+	struct s_fork	**forks_table;
 	pthread_mutex_t	mutex_routine;
 }	t_master;
 
