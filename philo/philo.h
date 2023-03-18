@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:21:25 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/17 15:48:56 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/18 16:38:52 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ typedef struct s_philo
 	int	is_eating;
 	int	is_sleeping;
 	int	is_thinking;
+	int	has_forks;
 }	t_philo;
 
 typedef struct s_master
@@ -54,7 +55,6 @@ typedef struct s_master
 	struct s_fork	**forks_table;
 	pthread_mutex_t	mutex_routine;
 }	t_master;
-
 
 int			ft_atoi(const char *nptr);
 int			timestamp(void);

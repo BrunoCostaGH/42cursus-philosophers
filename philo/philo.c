@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/17 16:53:46 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/18 18:22:02 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,29 +48,54 @@ philosopher number N + 1.
 
 static void	philo_eat(t_master *master, int id, int time_to_die)
 {
-	int	time_to_eat;
-	int	ini_timestamp;
+	int		time_to_eat;
+	int		ini_timestamp;
+	t_philo		*philosopher;
 
+	philosopher = master->philo_table[id - 1];
 	time_to_eat = master->time_to_eat;
+	ini_timestamp = timestamp();
 	while (timestamp() < time_to_die)
 	{
-		printf("doing noting..");
-		pthread_mutex_lock(&master->forks_table[id]->mutex_fork);
-		printf("%d %d has taken a fork", timestamp(), id);
-		if (master->forks_table[id + 1])
+		pthread_mutex_lock(&master->forks_table[id - 1]->mutex_fork);
+		if (master->forks_table[id - 1]->is_being_used == FALSE)
 		{
-			pthread_mutex_lock(&master->forks_table[id + 1]->mutex_fork);
-			printf("%d %d has taken a fork", timestamp(), id);
+			master->forks_table[id - 1]->is_being_used = TRUE;
+			printf("%d %d has taken a fork\n", timestamp(), id);
+			philosopher->has_forks++;
 		}
-		ini_timestamp = timestamp();
-		printf("%d %d is eating", ini_timestamp, id);
-		while (timestamp() < ini_timestamp + time_to_eat)
+		pthread_mutex_unlock(&master->forks_table[id - 1]->mutex_fork);
+		pthread_mutex_lock(&master->forks_table[id]->mutex_fork);
+		if (master->forks_table[id]->is_being_used == FALSE)
 		{
+			master->forks_table[id]->is_being_used = TRUE;
+			printf("%d %d has taken a fork\n", timestamp(), id);
+			philosopher->has_forks++;
 		}
 		pthread_mutex_unlock(&master->forks_table[id]->mutex_fork);
-		if (master->forks_table[id + 1])
-			pthread_mutex_unlock(&master->forks_table[id + 1]->mutex_fork);
+		if (philosopher->is_eating == FALSE && philosopher->has_forks == 2)
+		{
+			philosopher->is_eating = TRUE;
+			ini_timestamp = timestamp();
+			printf("%d %d is eating\n", ini_timestamp, id);
+			while (timestamp() <= ini_timestamp + time_to_eat)
+				usleep(0);
+			pthread_mutex_lock(&master->forks_table[id - 1]->mutex_fork);
+			if (master->forks_table[id - 1]->is_being_used == TRUE)
+				master->forks_table[id - 1]->is_being_used = FALSE;
+			pthread_mutex_unlock(&master->forks_table[id - 1]->mutex_fork);
+			pthread_mutex_lock(&master->forks_table[id]->mutex_fork);
+			if (master->forks_table[id]->is_being_used == TRUE)
+				master->forks_table[id]->is_being_used = FALSE;
+			pthread_mutex_unlock(&master->forks_table[id]->mutex_fork);
+			philosopher->is_eating = FALSE;
+			philosopher->has_forks = FALSE;
+			return ;
+		}
+		if (philosopher->has_forks > 2)
+			printf("\e[1;41m%d has %d forks! Has made enemys.\e[0m\n", id, philosopher->has_forks);
 	}
+	philosopher->is_alive = FALSE;
 	return ;
 }
 
@@ -97,12 +122,16 @@ void	*routine(void *arg)
 	id = master->philo_id_temp;
 	pthread_mutex_unlock(&master->mutex_routine);
 	time_to_die = timestamp() + master->time_to_die;
-	philo_eat(master, id, time_to_die);
-	time_to_die = timestamp() + master->time_to_die;
 	while (timestamp() < time_to_die)
 	{
+		master->philo_table[id - 1]->has_forks = FALSE;
+		if (master->forks_table[id] && master->philo_table[id - 1]->is_alive)
+		{
+			philo_eat(master, id, time_to_die);
+			time_to_die = timestamp() + master->time_to_die;
+		}
 	}
-	printf("%d %d died", timestamp(), id);
+	printf("%d %d died\n", timestamp(), id);
 	return (0);
 }
 
@@ -121,10 +150,12 @@ int	main(int argc, char **argv)
 				return (-1);
 			i++;
 		}
-		while (i-- > 0)
+		i = 0;
+		while (i != master->number_of_philosophers)
 		{
 			if (pthread_join(master->thread[i], NULL))
 				return (-1);
+			i++;
 		}
 		free_master(master);
 	}

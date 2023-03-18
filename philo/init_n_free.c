@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 15:23:18 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/17 16:46:56 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/18 16:39:17 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ static void	philo_table_init(t_master *master)
 		master->philo_table[i]->is_eating = FALSE;
 		master->philo_table[i]->is_sleeping = FALSE;
 		master->philo_table[i]->is_thinking = FALSE;
+		master->philo_table[i]->has_forks = FALSE;
 		i++;
 	}
 }
