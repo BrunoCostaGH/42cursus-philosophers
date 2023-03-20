@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 15:23:18 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/18 16:39:17 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/20 18:24:47 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,7 @@ void	free_master(t_master *master)
 		free(master->philo_table[i++]);
 	free(master->philo_table);
 	i = 0;
-	number_of_forks = 0;
-	if (master->number_of_philosophers == 1)
-		number_of_forks = master->number_of_philosophers;
-	else if (master->number_of_philosophers > 1)
-		number_of_forks = master->number_of_philosophers + 1;
+	number_of_forks = master->number_of_philosophers;
 	while (i != number_of_forks)
 		pthread_mutex_destroy(&master->forks_table[i++]->mutex_fork);
 	free(master->forks_table);
@@ -41,11 +37,7 @@ static void	forks_table_init(t_master *master)
 	int		number_of_forks;
 
 	i = 0;
-	number_of_forks = 0;
-	if (master->number_of_philosophers == 1)
-		number_of_forks = master->number_of_philosophers;
-	else if (master->number_of_philosophers > 1)
-		number_of_forks = master->number_of_philosophers + 1;
+	number_of_forks = master->number_of_philosophers;
 	master->forks_table = malloc(number_of_forks * sizeof(t_fork *));
 	if (!master->forks_table)
 		return ;

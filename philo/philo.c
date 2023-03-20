@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/18 18:22:02 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/20 19:00:09 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,46 +51,54 @@ static void	philo_eat(t_master *master, int id, int time_to_die)
 	int		time_to_eat;
 	int		ini_timestamp;
 	t_philo		*philosopher;
+	t_fork		*fork_1;
+	t_fork		*fork_2;
 
-	philosopher = master->philo_table[id - 1];
 	time_to_eat = master->time_to_eat;
 	ini_timestamp = timestamp();
+	philosopher = master->philo_table[id - 1];
+	fork_1 = master->forks_table[id - 1];
+	if (id < master->number_of_philosophers)
+		fork_2 = master->forks_table[id];
+	else
+		fork_2 = master->forks_table[0];
 	while (timestamp() < time_to_die)
 	{
-		pthread_mutex_lock(&master->forks_table[id - 1]->mutex_fork);
-		if (master->forks_table[id - 1]->is_being_used == FALSE)
+		pthread_mutex_lock(&fork_1->mutex_fork);
+		pthread_mutex_lock(&fork_2->mutex_fork);
+		if (fork_1->is_being_used == FALSE)
 		{
-			master->forks_table[id - 1]->is_being_used = TRUE;
-			printf("%d %d has taken a fork\n", timestamp(), id);
-			philosopher->has_forks++;
+			if (fork_2->is_being_used == FALSE)
+			{
+				printf("%d %d has taken a fork\n", timestamp(), id);
+				printf("%d %d has taken a fork\n", timestamp(), id);
+				fork_1->is_being_used = TRUE;
+				fork_2->is_being_used = TRUE;
+				philosopher->has_forks = 2;
+			}
 		}
-		pthread_mutex_unlock(&master->forks_table[id - 1]->mutex_fork);
-		pthread_mutex_lock(&master->forks_table[id]->mutex_fork);
-		if (master->forks_table[id]->is_being_used == FALSE)
-		{
-			master->forks_table[id]->is_being_used = TRUE;
-			printf("%d %d has taken a fork\n", timestamp(), id);
-			philosopher->has_forks++;
-		}
-		pthread_mutex_unlock(&master->forks_table[id]->mutex_fork);
+		pthread_mutex_unlock(&fork_2->mutex_fork);
+		pthread_mutex_unlock(&fork_1->mutex_fork);
 		if (philosopher->is_eating == FALSE && philosopher->has_forks == 2)
 		{
-			philosopher->is_eating = TRUE;
 			ini_timestamp = timestamp();
+			philosopher->is_eating = TRUE;
 			printf("%d %d is eating\n", ini_timestamp, id);
-			while (timestamp() <= ini_timestamp + time_to_eat)
-				usleep(0);
-			pthread_mutex_lock(&master->forks_table[id - 1]->mutex_fork);
-			if (master->forks_table[id - 1]->is_being_used == TRUE)
-				master->forks_table[id - 1]->is_being_used = FALSE;
-			pthread_mutex_unlock(&master->forks_table[id - 1]->mutex_fork);
-			pthread_mutex_lock(&master->forks_table[id]->mutex_fork);
-			if (master->forks_table[id]->is_being_used == TRUE)
-				master->forks_table[id]->is_being_used = FALSE;
-			pthread_mutex_unlock(&master->forks_table[id]->mutex_fork);
+			usleep(time_to_eat * 1000);
+			pthread_mutex_lock(&fork_2->mutex_fork);
+			pthread_mutex_lock(&fork_1->mutex_fork);
+			fork_1->is_being_used = FALSE;
+			fork_2->is_being_used = FALSE;
+			pthread_mutex_unlock(&fork_1->mutex_fork);
+			pthread_mutex_unlock(&fork_2->mutex_fork);
 			philosopher->is_eating = FALSE;
 			philosopher->has_forks = FALSE;
 			return ;
+		}
+		else if (philosopher->is_thinking == FALSE)
+		{
+			philosopher->is_thinking = TRUE;
+			printf("%d %d is thinking\n", timestamp(), id);
 		}
 		if (philosopher->has_forks > 2)
 			printf("\e[1;41m%d has %d forks! Has made enemys.\e[0m\n", id, philosopher->has_forks);
@@ -124,12 +132,13 @@ void	*routine(void *arg)
 	time_to_die = timestamp() + master->time_to_die;
 	while (timestamp() < time_to_die)
 	{
-		master->philo_table[id - 1]->has_forks = FALSE;
-		if (master->forks_table[id] && master->philo_table[id - 1]->is_alive)
+		if (master->number_of_philosophers > 1 && master->philo_table[id - 1]->is_alive)
 		{
 			philo_eat(master, id, time_to_die);
 			time_to_die = timestamp() + master->time_to_die;
 		}
+		printf("%d %d is sleeping\n", timestamp(), id);
+		usleep(master->time_to_sleep * 1000);
 	}
 	printf("%d %d died\n", timestamp(), id);
 	return (0);
@@ -148,6 +157,7 @@ int	main(int argc, char **argv)
 		{
 			if (pthread_create(&master->thread[i], NULL, &routine, master))
 				return (-1);
+			usleep(60);
 			i++;
 		}
 		i = 0;
