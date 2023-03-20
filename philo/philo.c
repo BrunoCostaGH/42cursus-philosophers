@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/20 19:00:09 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/20 19:26:32 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,15 +130,18 @@ void	*routine(void *arg)
 	id = master->philo_id_temp;
 	pthread_mutex_unlock(&master->mutex_routine);
 	time_to_die = timestamp() + master->time_to_die;
-	while (timestamp() < time_to_die)
+	while (master->philo_table[id - 1]->is_alive)
 	{
 		if (master->number_of_philosophers > 1 && master->philo_table[id - 1]->is_alive)
 		{
 			philo_eat(master, id, time_to_die);
 			time_to_die = timestamp() + master->time_to_die;
 		}
-		printf("%d %d is sleeping\n", timestamp(), id);
-		usleep(master->time_to_sleep * 1000);
+		if (master->philo_table[id - 1]->is_alive)
+		{
+			printf("%d %d is sleeping\n", timestamp(), id);
+			usleep(master->time_to_sleep * 1000);
+		}
 	}
 	printf("%d %d died\n", timestamp(), id);
 	return (0);
@@ -157,7 +160,7 @@ int	main(int argc, char **argv)
 		{
 			if (pthread_create(&master->thread[i], NULL, &routine, master))
 				return (-1);
-			usleep(60);
+			usleep(100);
 			i++;
 		}
 		i = 0;
