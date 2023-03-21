@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/20 19:26:32 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/21 19:52:10 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,14 +55,13 @@ static void	philo_eat(t_master *master, int id, int time_to_die)
 	t_fork		*fork_2;
 
 	time_to_eat = master->time_to_eat;
-	ini_timestamp = timestamp();
 	philosopher = master->philo_table[id - 1];
 	fork_1 = master->forks_table[id - 1];
 	if (id < master->number_of_philosophers)
 		fork_2 = master->forks_table[id];
 	else
 		fork_2 = master->forks_table[0];
-	while (timestamp() < time_to_die)
+	while (timestamp(master) < time_to_die)
 	{
 		pthread_mutex_lock(&fork_1->mutex_fork);
 		pthread_mutex_lock(&fork_2->mutex_fork);
@@ -70,8 +69,9 @@ static void	philo_eat(t_master *master, int id, int time_to_die)
 		{
 			if (fork_2->is_being_used == FALSE)
 			{
-				printf("%d %d has taken a fork\n", timestamp(), id);
-				printf("%d %d has taken a fork\n", timestamp(), id);
+				ini_timestamp = timestamp(master);
+				printf("%d %d has taken a fork\n", ini_timestamp, id);
+				printf("%d %d has taken a fork\n", ini_timestamp, id);
 				fork_1->is_being_used = TRUE;
 				fork_2->is_being_used = TRUE;
 				philosopher->has_forks = 2;
@@ -81,9 +81,9 @@ static void	philo_eat(t_master *master, int id, int time_to_die)
 		pthread_mutex_unlock(&fork_1->mutex_fork);
 		if (philosopher->is_eating == FALSE && philosopher->has_forks == 2)
 		{
-			ini_timestamp = timestamp();
+			philosopher->is_thinking = FALSE;
 			philosopher->is_eating = TRUE;
-			printf("%d %d is eating\n", ini_timestamp, id);
+			printf("%d %d is eating\n", timestamp(master), id);
 			usleep(time_to_eat * 1000);
 			pthread_mutex_lock(&fork_2->mutex_fork);
 			pthread_mutex_lock(&fork_1->mutex_fork);
@@ -91,19 +91,17 @@ static void	philo_eat(t_master *master, int id, int time_to_die)
 			fork_2->is_being_used = FALSE;
 			pthread_mutex_unlock(&fork_1->mutex_fork);
 			pthread_mutex_unlock(&fork_2->mutex_fork);
-			philosopher->is_eating = FALSE;
 			philosopher->has_forks = FALSE;
 			return ;
 		}
 		else if (philosopher->is_thinking == FALSE)
 		{
 			philosopher->is_thinking = TRUE;
-			printf("%d %d is thinking\n", timestamp(), id);
+			printf("%d %d is thinking\n", timestamp(master), id);
 		}
-		if (philosopher->has_forks > 2)
-			printf("\e[1;41m%d has %d forks! Has made enemys.\e[0m\n", id, philosopher->has_forks);
 	}
 	philosopher->is_alive = FALSE;
+	printf("%d %d died\n", timestamp(master), id);
 	return ;
 }
 
@@ -126,24 +124,43 @@ void	*routine(void *arg)
 	number_of_times_to_eat = master->number_of_times_each_philosopher_must_eat;
 	(void)number_of_times_to_eat;
 	pthread_mutex_lock(&master->mutex_routine);
-	master->philo_id_temp++;
-	id = master->philo_id_temp;
+	id = ++master->philo_id_temp;
 	pthread_mutex_unlock(&master->mutex_routine);
-	time_to_die = timestamp() + master->time_to_die;
-	while (master->philo_table[id - 1]->is_alive)
+	time_to_die = timestamp(master) + master->time_to_die;
+	while (!check_simulation_status(master))
 	{
-		if (master->number_of_philosophers > 1 && master->philo_table[id - 1]->is_alive)
+		if (master->number_of_philosophers > 1 && !check_simulation_status(master))
 		{
+			master->philo_table[id - 1]->is_sleeping = FALSE;
 			philo_eat(master, id, time_to_die);
-			time_to_die = timestamp() + master->time_to_die;
+			time_to_die = timestamp(master) + master->time_to_die;
 		}
-		if (master->philo_table[id - 1]->is_alive)
+		if (master->philo_table[id - 1]->is_eating && !check_simulation_status(master))
 		{
-			printf("%d %d is sleeping\n", timestamp(), id);
-			usleep(master->time_to_sleep * 1000);
+			master->philo_table[id - 1]->is_eating = FALSE;
+			if (master->time_to_sleep > time_to_die)
+			{
+				usleep(time_to_die * 1000);
+				master->philo_table[id - 1]->is_alive = FALSE;
+				printf("%d %d died\n", timestamp(master), id);
+				continue ;
+			}
+			else
+				usleep(master->time_to_sleep * 1000);
+			master->philo_table[id - 1]->is_sleeping = TRUE;
+			printf("%d %d is sleeping\n", timestamp(master), id);
+		}
+		if (!master->philo_table[id - 1]->is_sleeping)
+		{
+			master->philo_table[id - 1]->is_sleeping = FALSE;
+			master->philo_table[id - 1]->is_thinking = TRUE;
+			printf("%d %d is thinking\n", timestamp(master), id);
+			usleep(time_to_die * 1000);
+			master->philo_table[id - 1]->is_thinking = FALSE;
+			master->philo_table[id - 1]->is_alive = FALSE;
+			printf("%d %d died\n", timestamp(master), id);
 		}
 	}
-	printf("%d %d died\n", timestamp(), id);
 	return (0);
 }
 
@@ -158,7 +175,7 @@ int	main(int argc, char **argv)
 		master = master_init(argv);
 		while (i != master->number_of_philosophers)
 		{
-			if (pthread_create(&master->thread[i], NULL, &routine, master))
+			if (pthread_create(&master->philo_table[i]->thread, NULL, &routine, master))
 				return (-1);
 			usleep(100);
 			i++;
@@ -166,7 +183,7 @@ int	main(int argc, char **argv)
 		i = 0;
 		while (i != master->number_of_philosophers)
 		{
-			if (pthread_join(master->thread[i], NULL))
+			if (pthread_join(master->philo_table[i]->thread, NULL))
 				return (-1);
 			i++;
 		}
