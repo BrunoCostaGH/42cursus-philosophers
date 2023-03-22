@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/22 17:05:44 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/22 19:38:24 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,10 @@ static void	philo_eat(t_master *master, int id, int time_to_die)
 			if (fork_2->is_being_used == FALSE)
 			{
 				ini_timestamp = timestamp(master);
-				printf("%d %d has taken a fork\n", ini_timestamp, id);
-				printf("%d %d has taken a fork\n", ini_timestamp, id);
 				fork_1->is_being_used = TRUE;
 				fork_2->is_being_used = TRUE;
+				printf("%d %d has taken a fork\n", ini_timestamp, id);
+				printf("%d %d has taken a fork\n", ini_timestamp, id);
 				philosopher->has_forks = 2;
 			}
 		}
@@ -148,24 +148,39 @@ void	*routine(void *arg)
 	id = ++master->philo_id_temp;
 	pthread_mutex_unlock(&master->mutex_routine);
 	time_to_die = timestamp(master) + master->time_to_die;
+	pthread_mutex_lock(&master->mutex_status);
 	while (!check_simulation_status(master))
 	{
 		if (master->number_of_philosophers > 1 && !check_simulation_status(master))
 		{
+			pthread_mutex_unlock(&master->mutex_status);
 			master->philo_table[id - 1]->is_sleeping = FALSE;
 			philo_eat(master, id, time_to_die);
 			time_to_die = timestamp(master) + master->time_to_die;
+			pthread_mutex_lock(&master->mutex_status);
 		}
 		else if (master->number_of_philosophers == 1)
 		{
+			pthread_mutex_unlock(&master->mutex_status);
+			master->philo_table[id - 1]->is_thinking = TRUE;
 			printf("%d %d is thinking\n", timestamp(master), id);
 			usleep(time_to_die * 1000);
-			printf("%d %d died\n", timestamp(master), id);
+			pthread_mutex_lock(&master->mutex_status);
+			if (!check_simulation_status(master))
+			{
+				master->philo_table[id - 1]->is_alive = FALSE;
+				printf("%d %d died\n", timestamp(master), id);
+			}
 			break ;
 		}
 		if (master->philo_table[id - 1]->is_eating && !check_simulation_status(master))
+		{
+			pthread_mutex_unlock(&master->mutex_status);
 			philo_sleep(master, id);
+			pthread_mutex_lock(&master->mutex_status);
+		}
 	}
+	pthread_mutex_unlock(&master->mutex_status);
 	return (0);
 }
 
