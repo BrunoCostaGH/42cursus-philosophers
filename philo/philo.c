@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/21 19:52:10 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/22 17:05:44 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,18 +100,39 @@ static void	philo_eat(t_master *master, int id, int time_to_die)
 			printf("%d %d is thinking\n", timestamp(master), id);
 		}
 	}
-	philosopher->is_alive = FALSE;
-	printf("%d %d died\n", timestamp(master), id);
+	pthread_mutex_lock(&master->mutex_status);
+	if (!check_simulation_status(master))
+	{
+		philosopher->is_alive = FALSE;
+		printf("%d %d died\n", timestamp(master), id);
+	}
+	pthread_mutex_unlock(&master->mutex_status);
 	return ;
 }
 
-// static void	philo_sleep(t_master *master, int id)
-// {
-// 	int	time_to_sleep;
+static void	philo_sleep(t_master *master, int id)
+{
+ 	int	time_to_sleep;
 
-// 	time_to_sleep = master->time_to_sleep;
-// 	return ;
-// }
+ 	time_to_sleep = master->time_to_sleep;
+	master->philo_table[id - 1]->is_eating = FALSE;
+	master->philo_table[id - 1]->is_sleeping = TRUE;
+	printf("%d %d is sleeping\n", timestamp(master), id);
+	if (time_to_sleep > master->time_to_die)
+	{
+		usleep(master->time_to_die * 1000);
+		pthread_mutex_lock(&master->mutex_status);
+		if (!check_simulation_status(master))
+		{
+			master->philo_table[id - 1]->is_alive = FALSE;
+			printf("%d %d died\n", timestamp(master), id);
+		}
+		pthread_mutex_unlock(&master->mutex_status);
+	}
+	else
+		usleep(time_to_sleep * 1000);
+ 	return ;
+}
 
 void	*routine(void *arg)
 {
@@ -135,31 +156,15 @@ void	*routine(void *arg)
 			philo_eat(master, id, time_to_die);
 			time_to_die = timestamp(master) + master->time_to_die;
 		}
-		if (master->philo_table[id - 1]->is_eating && !check_simulation_status(master))
+		else if (master->number_of_philosophers == 1)
 		{
-			master->philo_table[id - 1]->is_eating = FALSE;
-			if (master->time_to_sleep > time_to_die)
-			{
-				usleep(time_to_die * 1000);
-				master->philo_table[id - 1]->is_alive = FALSE;
-				printf("%d %d died\n", timestamp(master), id);
-				continue ;
-			}
-			else
-				usleep(master->time_to_sleep * 1000);
-			master->philo_table[id - 1]->is_sleeping = TRUE;
-			printf("%d %d is sleeping\n", timestamp(master), id);
-		}
-		if (!master->philo_table[id - 1]->is_sleeping)
-		{
-			master->philo_table[id - 1]->is_sleeping = FALSE;
-			master->philo_table[id - 1]->is_thinking = TRUE;
 			printf("%d %d is thinking\n", timestamp(master), id);
 			usleep(time_to_die * 1000);
-			master->philo_table[id - 1]->is_thinking = FALSE;
-			master->philo_table[id - 1]->is_alive = FALSE;
 			printf("%d %d died\n", timestamp(master), id);
+			break ;
 		}
+		if (master->philo_table[id - 1]->is_eating && !check_simulation_status(master))
+			philo_sleep(master, id);
 	}
 	return (0);
 }

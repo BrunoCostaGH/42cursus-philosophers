@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:21:25 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/21 19:38:21 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/22 14:14:02 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ typedef struct s_master
 	struct s_fork	**forks_table;
 	pthread_t	thread;
 	pthread_mutex_t	mutex_routine;
+	pthread_mutex_t	mutex_status;
 	pthread_mutex_t	mutex_time;
 }	t_master;
 

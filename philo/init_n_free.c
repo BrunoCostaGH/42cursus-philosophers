@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 15:23:18 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/21 19:37:00 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/22 14:14:54 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	free_master(t_master *master)
 	}
 	free(master->forks_table);
 	pthread_mutex_destroy(&master->mutex_routine);
+	pthread_mutex_destroy(&master->mutex_status);
 	pthread_mutex_destroy(&master->mutex_time);
 	free(master);
 }
@@ -97,6 +98,7 @@ t_master	*master_init(char **argv)
 	philo_table_init(master);
 	forks_table_init(master);
 	pthread_mutex_init(&master->mutex_routine, NULL);
+	pthread_mutex_init(&master->mutex_status, NULL);
 	pthread_mutex_init(&master->mutex_time, NULL);
 	return (master);
 }

@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:03:40 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/21 19:38:06 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/22 17:02:53 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,16 @@ int	check_simulation_status(t_master *master)
 	int	i;
 
 	i = 0;
+	pthread_mutex_lock(&master->mutex_status);
 	while (i != master->number_of_philosophers)
 	{
 		if (master->philo_table[i]->is_alive == FALSE)
+		{
+			pthread_mutex_unlock(&master->mutex_status);
 			return (1);
+		}
 		i++;
 	}
+	pthread_mutex_unlock(&master->mutex_status);
 	return (0);
 }
