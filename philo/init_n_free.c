@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 15:23:18 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/22 14:14:54 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/24 11:54:34 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	free_master(t_master *master)
 	}
 	free(master->forks_table);
 	pthread_mutex_destroy(&master->mutex_routine);
+	pthread_mutex_destroy(&master->mutex_message);
 	pthread_mutex_destroy(&master->mutex_status);
 	pthread_mutex_destroy(&master->mutex_time);
 	free(master);
@@ -70,6 +71,7 @@ static void	philo_table_init(t_master *master)
 		master->philo_table[i]->is_sleeping = FALSE;
 		master->philo_table[i]->is_thinking = FALSE;
 		master->philo_table[i]->has_forks = FALSE;
+		master->philo_table[i]->number_of_times_has_eaten = 0;
 		i++;
 	}
 }
@@ -94,10 +96,11 @@ t_master	*master_init(char **argv)
 	if (argv[5])
 		master->number_of_times_each_philosopher_must_eat = ft_atoi(argv[5]);
 	else
-		master->number_of_times_each_philosopher_must_eat = -1;
+		master->number_of_times_each_philosopher_must_eat = 0;
 	philo_table_init(master);
 	forks_table_init(master);
 	pthread_mutex_init(&master->mutex_routine, NULL);
+	pthread_mutex_init(&master->mutex_message, NULL);
 	pthread_mutex_init(&master->mutex_status, NULL);
 	pthread_mutex_init(&master->mutex_time, NULL);
 	return (master);
