@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:21:25 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/24 13:22:40 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/25 14:08:55 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct s_philo
 	int			is_sleeping;
 	int			is_thinking;
 	int			has_forks;
+	int			time_to_die;
 	int			number_of_times_has_eaten;
 	pthread_t	thread;
 }	t_philo;
@@ -70,8 +71,8 @@ void		philo_think(t_master *master, int id);
 void		clean_the_forks(t_master *master, int id);
 void		kill_philosopher(t_master *master, int id);
 void		check_fork_status(t_master *master, int id);
-void		philo_eat(t_master *master, int id, int time_to_die);
-void		run_routine(t_master *master, int id, int time_to_die);
+void		philo_eat(t_master *master, int id);
+void		go_to_table(t_master *master, int id);
 void		print_message(t_master *master, int message_id, int id);
 
 t_master	*master_init(char **argv);

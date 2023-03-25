@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/24 13:22:42 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/25 14:17:45 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,14 +71,14 @@ void	philo_think(t_master *master, int id)
 	pthread_mutex_unlock(&master->mutex_message);
 }
 
-void	philo_eat(t_master *master, int id, int time_to_die)
+void	philo_eat(t_master *master, int id)
 {
 	int			time_to_eat;
 	t_philo		*philosopher;
 
 	time_to_eat = master->time_to_eat;
 	philosopher = master->philo_table[id - 1];
-	while (timestamp(master) < time_to_die)
+	while (timestamp(master) < philosopher->time_to_die)
 	{
 		check_fork_status(master, id);
 		if (philosopher->is_eating == FALSE && philosopher->has_forks == 2)
@@ -103,18 +103,17 @@ void	philo_eat(t_master *master, int id, int time_to_die)
 void	*routine(void *arg)
 {
 	int			id;
-	int			time_to_die;
 	t_master	*master;
 
 	master = (t_master *)arg;
 	pthread_mutex_lock(&master->mutex_routine);
 	id = ++master->philo_id_temp;
 	pthread_mutex_unlock(&master->mutex_routine);
-	time_to_die = timestamp(master) + master->time_to_die;
 	pthread_mutex_lock(&master->mutex_status);
+	master->philo_table[id - 1]->time_to_die += timestamp(master);
 	while (!check_simulation_status(master))
 	{
-		run_routine(master, id, time_to_die);
+		go_to_table(master, id);
 		if (master->philo_table[id - 1]->is_eating \
 			&& !check_simulation_status(master))
 		{
