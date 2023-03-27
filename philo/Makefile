@@ -6,7 +6,7 @@
 #    By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/16 12:38:11 by bsilva-c          #+#    #+#              #
-#    Updated: 2023/03/24 13:24:57 by bsilva-c         ###   ########.fr        #
+#    Updated: 2023/03/27 16:13:31 by bsilva-c         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ CC=cc
 CFLAGS=-Wall -Werror -Wextra -g 
 DEPS=
 
-SRCS=philo.c philo_utils.c fork_utils.c ft_atoi.c init_n_free.c
+SRCS=philo.c philo_utils.c philo_eat.c fork_utils.c ft_atoi.c init_n_free.c
 OBJS=$(SRCS:.c=.o)
 NAME=philo
 

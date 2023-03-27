@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/25 14:17:45 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/27 16:22:00 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,35 +69,6 @@ void	philo_think(t_master *master, int id)
 	print_message(master, 4, id);
 	philosopher->is_thinking = TRUE;
 	pthread_mutex_unlock(&master->mutex_message);
-}
-
-void	philo_eat(t_master *master, int id)
-{
-	int			time_to_eat;
-	t_philo		*philosopher;
-
-	time_to_eat = master->time_to_eat;
-	philosopher = master->philo_table[id - 1];
-	while (timestamp(master) < philosopher->time_to_die)
-	{
-		check_fork_status(master, id);
-		if (philosopher->is_eating == FALSE && philosopher->has_forks == 2)
-		{
-			pthread_mutex_lock(&master->mutex_message);
-			print_message(master, 2, id);
-			philosopher->is_thinking = FALSE;
-			philosopher->is_eating = TRUE;
-			pthread_mutex_unlock(&master->mutex_message);
-			usleep(time_to_eat * 1000);
-			clean_the_forks(master, id);
-			philosopher->number_of_times_has_eaten++;
-			return ;
-		}
-		else if (philosopher->is_thinking == FALSE)
-			philo_think(master, id);
-	}
-	kill_philosopher(master, id);
-	return ;
 }
 
 void	*routine(void *arg)

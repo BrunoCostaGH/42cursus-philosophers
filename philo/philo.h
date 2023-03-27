@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:21:25 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/25 14:08:55 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/03/27 16:21:55 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,17 +62,16 @@ typedef struct s_master
 	pthread_mutex_t	mutex_time;
 }	t_master;
 
-int			timestamp(t_master *master);
 int			ft_atoi(const char *nptr);
+int			timestamp(t_master *master);
 int			check_simulation_status(t_master *master);
 
 void		free_master(t_master *master);
+void		go_to_table(t_master *master, int id);
 void		philo_think(t_master *master, int id);
 void		clean_the_forks(t_master *master, int id);
 void		kill_philosopher(t_master *master, int id);
 void		check_fork_status(t_master *master, int id);
-void		philo_eat(t_master *master, int id);
-void		go_to_table(t_master *master, int id);
 void		print_message(t_master *master, int message_id, int id);
 
 t_master	*master_init(char **argv);
