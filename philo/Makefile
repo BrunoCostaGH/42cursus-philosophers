@@ -6,7 +6,7 @@
 #    By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/16 12:38:11 by bsilva-c          #+#    #+#              #
-#    Updated: 2023/03/27 16:13:31 by bsilva-c         ###   ########.fr        #
+#    Updated: 2023/03/30 17:40:41 by bsilva-c         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ NAME=philo
 
 all: $(NAME)
 $(NAME): $(OBJS) $(DEPS)
-	@$(CC) $(OBJS) $(DEPS) -pthread -o $(NAME)
+	@$(CC) $(OBJS) $(DEPS) -pthread -fsanitize=address -o $(NAME)
 clean:
 	@rm $(OBJS)
 fclean: clean
