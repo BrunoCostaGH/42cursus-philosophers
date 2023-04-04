@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:18:16 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/04 16:10:32 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/04 16:47:30 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <signal.h>
 # include <pthread.h>
 # include <sys/time.h>
+# include <sys/wait.h>
 # include <sys/types.h>
 # include <semaphore.h>
 

@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:16:03 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/04 16:11:54 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/04 16:51:08 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int	main(int argc, char **argv)
 		}
 		free_master(master);
 	}
+	waitpid(-1, NULL, 0);
 	printf("Ended process with PID %d\n", getpid());
 	return (0);
 }
