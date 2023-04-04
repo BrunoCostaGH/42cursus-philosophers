@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/30 18:14:04 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/04 14:16:28 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ int	main(int argc, char **argv)
 	int				i;
 	t_master		*master;
 
-	if (argc >= 4)
+	if (argc == 4 || argc == 5)
 	{
 		i = 0;
 		master = master_init(argv);
@@ -112,7 +112,7 @@ int	main(int argc, char **argv)
 		{
 			if (pthread_create(&master->philo_table[i]->thread, NULL, \
 				&routine, master))
-				return (-1);
+				return (1);
 			usleep(100);
 			i++;
 		}
@@ -120,7 +120,7 @@ int	main(int argc, char **argv)
 		while (i != master->number_of_philosophers)
 		{
 			if (pthread_join(master->philo_table[i]->thread, NULL))
-				return (-1);
+				return (1);
 			i++;
 		}
 		free_master(master);
