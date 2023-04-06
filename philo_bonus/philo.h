@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:18:16 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/04 16:47:30 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/06 18:46:12 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,12 @@ typedef struct s_master
 	struct s_philo	**philo_table;
 }	t_master;
 
+int			timestamp(void);
 int			ft_atoi(const char *nptr);
 
+void    set_handler(void *fun);
 void	free_master(t_master *master);
+void	print_message(int message_id, int id);
 
 t_master	*master_init(char **argv);
 
