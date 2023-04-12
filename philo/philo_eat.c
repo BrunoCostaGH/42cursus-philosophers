@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 15:12:05 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/30 19:25:31 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/10 16:30:32 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ static void	philo_eat(t_master *master, int id)
 			philo_think(master, id);
 	}
 	kill_philosopher(master, id);
-	return ;
 }
 
 void	go_to_table(t_master *master, int id)

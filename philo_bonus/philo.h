@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:18:16 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/08 18:18:41 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/12 16:15:08 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ typedef struct s_philo
 	int		number_of_times_has_eaten;
 	int		philo_pid;
 	sem_t	*fork_sem;
+	sem_t	*master_sem;
+	sem_t	*message_sem;
 }	t_philo;
 
 typedef struct s_master
@@ -59,13 +61,20 @@ typedef struct s_master
 	int				time_to_sleep;
 	int				number_of_times_each_philosopher_must_eat;
 	char			*fork_sem_name;
+	char			*master_sem_name;
+	char			*message_sem_name;
 	sem_t			*fork_sem;
+	sem_t			*master_sem;
+	sem_t			*message_sem;
 	struct s_philo	**philo_table;
 }	t_master;
 
-void    set_handler(void *fun);
+void    set_handler(void *func);
 void	free_master(t_master *master);
 void	print_message(int message_id, int id);
+void	clean_the_forks(t_philo *philosopher);
+void	kill_philosopher(t_philo *philosopher, int id);
+void	check_fork_status(t_philo *philosopher, int id);
 
 int			timestamp(void);
 int			ft_atoi(const char *nptr);
