@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 15:50:10 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/06 18:30:38 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/11 14:42:57 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,13 @@ void	print_message(int message_id, int id)
 		printf("%d %d is thinking\n", m_timestamp, id);
 	else if (message_id == 5)
 		printf("%d %d died\n", m_timestamp, id);
+}
+
+void	kill_philosopher(t_philo *philosopher, int id)
+{
+	sem_wait(philosopher->message_sem);
+	print_message(5, id);
+	sem_post(philosopher->message_sem);
+	philosopher->is_alive = FALSE;
+	kill(0, SIGTERM);
 }
