@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:16:03 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/12 18:57:33 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/13 10:20:44 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,8 @@ void	routine(t_master *master, int id)
 	{
 		philo_eat(philosopher, master->time_to_eat, id);
 		philosopher->time_to_die = timestamp() + master->time_to_die;
+		if (philosopher->number_of_times_has_eaten == master->number_of_times_each_philosopher_must_eat)
+			break ;
 		if (philosopher->is_alive)
 			philo_sleep(philosopher, master->time_to_sleep, id);
 	}
