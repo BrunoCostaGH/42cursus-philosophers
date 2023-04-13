@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:18:16 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/12 16:15:08 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/13 10:29:09 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,6 @@
 # ifndef FALSE
 #  define FALSE 0
 # endif
-
-typedef struct s_fork
-{
-	int	is_being_used;
-}	t_fork;
 
 typedef struct s_philo
 {
@@ -76,8 +71,9 @@ void	clean_the_forks(t_philo *philosopher);
 void	kill_philosopher(t_philo *philosopher, int id);
 void	check_fork_status(t_philo *philosopher, int id);
 
-int			timestamp(void);
-int			ft_atoi(const char *nptr);
+int	    timestamp(void);
+int		ft_atoi(const char *nptr);
+
 
 t_master	*master_init(char **argv);
 

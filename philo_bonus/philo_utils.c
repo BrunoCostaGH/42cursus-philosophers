@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 15:50:10 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/11 14:42:57 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/13 10:30:36 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
 */
 int	timestamp(void)
 {
-	int						ml_cur;
-	static int				ml_ini;
+	long						ml_cur;
+	static long				ml_ini;
 	struct timeval			cur_tv;
 	static struct timeval	ini_tv;
 
@@ -31,7 +31,7 @@ int	timestamp(void)
 	}
 	gettimeofday(&cur_tv, NULL);
 	ml_cur = (cur_tv.tv_sec * 1000000 + cur_tv.tv_usec);
-	return ((ml_cur - ml_ini) * 0.001);
+	return ((ml_cur - ml_ini) / 1000);
 }
 
 /*
