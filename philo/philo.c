@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/10 16:30:45 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/13 10:52:47 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ number_of_philosophers time_to_die time_to_eat time_to_sleep
 ◦ number_of_philosophers: The number of philosophers and also the number
 of forks.
 
-◦ time_to_die (in milliseconds): If a philosopher didn’t start eating 
+◦ time_to_die (in milliseconds): If a philosopher did not start eating
 time_to_die milliseconds since the beginning of their last meal or the 
 beginning of the simulation, they die.
 
@@ -104,7 +104,7 @@ int	main(int argc, char **argv)
 	int				i;
 	t_master		*master;
 
-	if (argc == 4 || argc == 5)
+	if (argc == 5 || argc == 6)
 	{
 		i = 0;
 		master = master_init(argv);

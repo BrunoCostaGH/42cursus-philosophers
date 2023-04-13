@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:16:03 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/13 10:20:44 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/13 11:33:50 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ void	routine(t_master *master, int id)
 	philosopher->fork_sem = sem_open(master->fork_sem_name, 0);
 	if (!philosopher->fork_sem)
 	{
-		printf("\e[1;41m===%d===ERROR: fork_sem failed on open\e[a0m\n", id);
+		printf("\e[1;41m===%d===ERROR: fork_sem failed on open\e[0m\n", id);
 		exit(1);
 	}
 	philosopher->message_sem = sem_open(master->message_sem_name, 0);
@@ -118,8 +118,11 @@ void	routine(t_master *master, int id)
 	{
 		philo_eat(philosopher, master->time_to_eat, id);
 		philosopher->time_to_die = timestamp() + master->time_to_die;
-		if (philosopher->number_of_times_has_eaten == master->number_of_times_each_philosopher_must_eat)
-			break ;
+		if (master->number_of_times_each_philosopher_must_eat > 0)
+		{
+			if (philosopher->number_of_times_has_eaten == master->number_of_times_each_philosopher_must_eat)
+				break ;
+		}
 		if (philosopher->is_alive)
 			philo_sleep(philosopher, master->time_to_sleep, id);
 	}
@@ -136,7 +139,7 @@ int	main(int argc, char **argv)
 	i = 0;
 	supervisor = TRUE;
 	master = master_init(argv);
-	if ((argc == 4 || argc == 5) && master)
+	if ((argc == 5 || argc == 6) && master)
 	{
 		while (i != master->number_of_philosophers)
 		{
@@ -154,7 +157,7 @@ int	main(int argc, char **argv)
 			i++;
 		}
 	}
-	if ((argc == 4 || argc == 5) && supervisor)
+	if ((argc == 5 || argc == 6) && supervisor)
 	{
 		set_handler(&spectate);
 		waitpid(-1, NULL, 0);
