@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:18:16 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/13 10:29:09 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/14 15:16:21 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ typedef struct s_philo
 	int		is_eating;
 	int		is_sleeping;
 	int		is_thinking;
+	int     is_full;
 	int		has_forks;
 	int		time_to_die;
 	int		number_of_times_has_eaten;
@@ -46,6 +47,7 @@ typedef struct s_philo
 	sem_t	*fork_sem;
 	sem_t	*master_sem;
 	sem_t	*message_sem;
+	sem_t	*death_sem;
 }	t_philo;
 
 typedef struct s_master
@@ -58,9 +60,11 @@ typedef struct s_master
 	char			*fork_sem_name;
 	char			*master_sem_name;
 	char			*message_sem_name;
+	char			*death_sem_name;
 	sem_t			*fork_sem;
-	sem_t			*master_sem;
 	sem_t			*message_sem;
+	sem_t			*master_sem;
+	sem_t			*death_sem;
 	struct s_philo	**philo_table;
 }	t_master;
 

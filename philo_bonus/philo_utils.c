@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 15:50:10 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/13 10:30:36 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/14 15:14:05 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,10 @@ void	kill_philosopher(t_philo *philosopher, int id)
 	sem_wait(philosopher->message_sem);
 	print_message(5, id);
 	sem_post(philosopher->message_sem);
+	sem_close(philosopher->message_sem);
+	sem_close(philosopher->master_sem);
+	sem_close(philosopher->death_sem);
+	sem_close(philosopher->fork_sem);
 	philosopher->is_alive = FALSE;
-	kill(0, SIGTERM);
+	exit(0);
 }

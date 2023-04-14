@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:27:27 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/12 18:59:58 by bsilva-c         ###   ########.fr       */
+feat/*   Updated: 2023/04/14 15:15:25 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,11 @@ void	free_master(t_master *master)
 	sem_close(master->fork_sem);
 	sem_close(master->message_sem);
 	sem_close(master->master_sem);
+	sem_close(master->death_sem);
 	sem_unlink(master->fork_sem_name);
 	sem_unlink(master->message_sem_name);
 	sem_unlink(master->master_sem_name);
+	sem_unlink(master->death_sem_name);
 	free(master);
 }
 
@@ -46,6 +48,7 @@ static void	philo_table_init(t_master *master)
 		master->philo_table[i]->is_eating = FALSE;
 		master->philo_table[i]->is_sleeping = FALSE;
 		master->philo_table[i]->is_thinking = FALSE;
+		master->philo_table[i]->is_full = FALSE;
 		master->philo_table[i]->has_forks = FALSE;
 		master->philo_table[i]->time_to_die = master->time_to_die;
 		master->philo_table[i]->number_of_times_has_eaten = 0;
@@ -109,6 +112,14 @@ t_master	*master_init(char **argv)
 	sem_unlink(master->master_sem_name);
 	master->master_sem = sem_open(master->master_sem_name, 0100, 0600, 1);
 	if (!master->master_sem)
+	{
+		printf("\e[1;41m===%d===ERROR: fork_sem failed on open\e[0m\n", 0);
+		return (0);
+	}
+	master->death_sem_name = "/death_sem";
+	sem_unlink(master->death_sem_name);
+	master->death_sem = sem_open(master->death_sem_name, 0100, 0600, 1);
+	if (!master->death_sem)
 	{
 		printf("\e[1;41m===%d===ERROR: fork_sem failed on open\e[0m\n", 0);
 		return (0);

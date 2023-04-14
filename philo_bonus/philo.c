@@ -6,34 +6,19 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:16:03 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/13 11:33:50 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/14 15:22:34 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	kill_process(int sig, t_master *master, int id)
+void spectate(t_master *master)
 {
-	static t_philo	*philosopher;
+	int i;
 
-	if (!philosopher)
-		philosopher = master->philo_table[id - 1];
-	else
-	{
-		if (sig == SIGTERM)
-		{
-			sem_close(philosopher->message_sem);
-			sem_close(philosopher->master_sem);
-			sem_close(philosopher->fork_sem);
-			exit(0);
-		}
-	}
-}
-
-void	spectate(int sig)
-{
-	(void)sig;
-	// Nothing here
+	i = 0;
+	while (i < master->number_of_philosophers)
+		kill(master->philo_table[i++]->philo_pid, SIGTERM);
 }
 
 static void	philo_sleep(t_philo *philosopher, int time_to_sleep, int id)
@@ -45,11 +30,13 @@ static void	philo_sleep(t_philo *philosopher, int time_to_sleep, int id)
 	if (timestamp() + time_to_sleep > philosopher->time_to_die)
 	{
 		usleep(philosopher->time_to_die * 1000);
+		sem_wait(philosopher->death_sem);
 		kill_philosopher(philosopher, id);
 	}
 	else
 		usleep(time_to_sleep * 1000);
 	philosopher->is_sleeping = FALSE;
+	philosopher->is_full = FALSE;
 }
 
 static void	philo_think(t_philo *philosopher, int id)
@@ -81,12 +68,17 @@ static void	philo_eat(t_philo *philosopher, int time_to_eat, int id)
 				usleep(time_to_eat * 1000);
 			clean_the_forks(philosopher);
 			philosopher->is_eating = FALSE;
+			philosopher->is_full = TRUE;
 			philosopher->number_of_times_has_eaten++;
 			return ;
 		}
 		else if (philosopher->is_thinking == FALSE)
+		{
 			philo_think(philosopher, id);
+			check_fork_status(philosopher, id);
+		}
 	}
+	sem_wait(philosopher->death_sem);
 	kill_philosopher(philosopher, id);
 }
 
@@ -114,19 +106,29 @@ void	routine(t_master *master, int id)
 		printf("\e[1;41m===%d===ERROR: fork_sem failed on open\e[0m\n", id);
 		exit(1);
 	}
+	philosopher->death_sem = sem_open(master->death_sem_name, 0);
+	if (!philosopher->death_sem)
+	{
+		printf("\e[1;41m===%d===ERROR: fork_sem failed on open\e[0m\n", id);
+		exit(1);
+	}
 	while (timestamp() < philosopher->time_to_die && philosopher->is_alive)
 	{
-		philo_eat(philosopher, master->time_to_eat, id);
-		philosopher->time_to_die = timestamp() + master->time_to_die;
+		if (master->number_of_philosophers > 1)
+		{
+			philo_eat(philosopher, master->time_to_eat, id);
+			philosopher->time_to_die = timestamp() + master->time_to_die;
+		}
 		if (master->number_of_times_each_philosopher_must_eat > 0)
 		{
 			if (philosopher->number_of_times_has_eaten == master->number_of_times_each_philosopher_must_eat)
-				break ;
+				exit(0);
 		}
-		if (philosopher->is_alive)
+		if (philosopher->is_alive && philosopher->is_full)
 			philo_sleep(philosopher, master->time_to_sleep, id);
 	}
-	kill_process(SIGTERM, master, id);
+	sem_wait(philosopher->death_sem);
+	kill_philosopher(philosopher, id);
 }
 
 int	main(int argc, char **argv)
@@ -136,19 +138,17 @@ int	main(int argc, char **argv)
 	int			supervisor;
 	t_master	*master;
 
-	i = 0;
-	supervisor = TRUE;
-	master = master_init(argv);
-	if ((argc == 5 || argc == 6) && master)
+	if ((argc == 5 || argc == 6))
 	{
-		while (i != master->number_of_philosophers)
+		i = 0;
+		supervisor = TRUE;
+		master = master_init(argv);
+		while (i < master->number_of_philosophers)
 		{
 			pid = fork();
 			if (!pid)
 			{
 				supervisor = FALSE;
-				set_handler(&kill_process);
-				kill_process(0, master, i + 1);
 				routine(master, i + 1);
 				break ;
 			}
@@ -156,12 +156,12 @@ int	main(int argc, char **argv)
 				master->philo_table[i]->philo_pid = pid;
 			i++;
 		}
+		if (supervisor)
+		{
+			waitpid(-1, NULL, 0);
+			spectate(master);
+		}
+		free_master(master);
 	}
-	if ((argc == 5 || argc == 6) && supervisor)
-	{
-		set_handler(&spectate);
-		waitpid(-1, NULL, 0);
-	}
-	free_master(master);
 	return (0);
 }
