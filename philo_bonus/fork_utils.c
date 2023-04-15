@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/10 16:10:12 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/13 10:47:43 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/15 18:37:17 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 
 void	clean_the_forks(t_philo *philosopher)
 {
+	if (philosopher->number_of_times_must_eat > 0)
+	{
+		if (philosopher->number_of_times_has_eaten == philosopher->number_of_times_must_eat)
+			exit(0);
+	}
 	sem_post(philosopher->fork_sem);
 	sem_post(philosopher->fork_sem);
 }

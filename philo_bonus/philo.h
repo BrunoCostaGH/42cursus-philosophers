@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:18:16 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/14 15:16:21 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/15 18:25:45 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_philo
 	int		has_forks;
 	int		time_to_die;
 	int		number_of_times_has_eaten;
+	int		number_of_times_must_eat;
 	int		philo_pid;
 	sem_t	*fork_sem;
 	sem_t	*master_sem;

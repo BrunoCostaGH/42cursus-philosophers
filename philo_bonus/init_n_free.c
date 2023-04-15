@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:27:27 by bsilva-c          #+#    #+#             */
-feat/*   Updated: 2023/04/14 15:15:25 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/15 18:25:58 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ static void	philo_table_init(t_master *master)
 		master->philo_table[i]->has_forks = FALSE;
 		master->philo_table[i]->time_to_die = master->time_to_die;
 		master->philo_table[i]->number_of_times_has_eaten = 0;
+		master->philo_table[i]->number_of_times_must_eat = master->number_of_times_each_philosopher_must_eat;
 		master->philo_table[i]->philo_pid = 0;
 		i++;
 	}

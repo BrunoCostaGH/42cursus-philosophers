@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:16:03 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/14 15:22:34 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/15 19:01:58 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static void	philo_sleep(t_philo *philosopher, int time_to_sleep, int id)
 	philosopher->is_sleeping = TRUE;
 	if (timestamp() + time_to_sleep > philosopher->time_to_die)
 	{
-		usleep(philosopher->time_to_die * 1000);
+		usleep((philosopher->time_to_die - timestamp()) * 1000);
 		sem_wait(philosopher->death_sem);
 		kill_philosopher(philosopher, id);
 	}
@@ -61,7 +61,7 @@ static void	philo_eat(t_philo *philosopher, int time_to_eat, int id)
 			philosopher->is_eating = TRUE;
 			if (timestamp() + time_to_eat > philosopher->time_to_die)
 			{
-				usleep(philosopher->time_to_die * 1000);
+				usleep((philosopher->time_to_die - timestamp()) * 1000);
 				break ;
 			}
 			else
@@ -73,10 +73,7 @@ static void	philo_eat(t_philo *philosopher, int time_to_eat, int id)
 			return ;
 		}
 		else if (philosopher->is_thinking == FALSE)
-		{
 			philo_think(philosopher, id);
-			check_fork_status(philosopher, id);
-		}
 	}
 	sem_wait(philosopher->death_sem);
 	kill_philosopher(philosopher, id);
@@ -112,20 +109,17 @@ void	routine(t_master *master, int id)
 		printf("\e[1;41m===%d===ERROR: fork_sem failed on open\e[0m\n", id);
 		exit(1);
 	}
-	while (timestamp() < philosopher->time_to_die && philosopher->is_alive)
+	while (timestamp() < philosopher->time_to_die)
 	{
 		if (master->number_of_philosophers > 1)
 		{
 			philo_eat(philosopher, master->time_to_eat, id);
 			philosopher->time_to_die = timestamp() + master->time_to_die;
 		}
-		if (master->number_of_times_each_philosopher_must_eat > 0)
-		{
-			if (philosopher->number_of_times_has_eaten == master->number_of_times_each_philosopher_must_eat)
-				exit(0);
-		}
-		if (philosopher->is_alive && philosopher->is_full)
+		if (philosopher->is_full)
 			philo_sleep(philosopher, master->time_to_sleep, id);
+		else if (philosopher->is_thinking == FALSE)
+			philo_think(philosopher, id);
 	}
 	sem_wait(philosopher->death_sem);
 	kill_philosopher(philosopher, id);
