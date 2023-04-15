@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/13 10:52:47 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/15 19:04:15 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static void	philo_sleep(t_master *master, int id)
 	pthread_mutex_unlock(&master->mutex_message);
 	if (timestamp(master) + time_to_sleep > philosopher->time_to_die)
 	{
-		usleep(philosopher->time_to_die * 1000);
+		usleep((philosopher->time_to_die - timestamp(master)) * 1000);
 		kill_philosopher(master, id);
 	}
 	else
