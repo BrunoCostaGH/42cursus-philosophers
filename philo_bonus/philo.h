@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:18:16 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/15 18:25:45 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/15 20:07:51 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ typedef struct s_philo
 	int		is_eating;
 	int		is_sleeping;
 	int		is_thinking;
-	int     is_full;
+	int		is_full;
 	int		has_forks;
 	int		time_to_die;
 	int		number_of_times_has_eaten;
@@ -69,15 +69,15 @@ typedef struct s_master
 	struct s_philo	**philo_table;
 }	t_master;
 
-void    set_handler(void *func);
-void	free_master(t_master *master);
-void	print_message(int message_id, int id);
-void	clean_the_forks(t_philo *philosopher);
-void	kill_philosopher(t_philo *philosopher, int id);
-void	check_fork_status(t_philo *philosopher, int id);
+void		set_handler(void *func);
+void		free_master(t_master *master);
+void		print_message(int message_id, int id);
+void		clean_the_forks(t_philo *philosopher);
+void		kill_philosopher(t_philo *philosopher, int id);
+void		check_fork_status(t_philo *philosopher, int id);
 
-int	    timestamp(void);
-int		ft_atoi(const char *nptr);
+int			timestamp(void);
+int			ft_atoi(const char *nptr);
 
 
 t_master	*master_init(char **argv);

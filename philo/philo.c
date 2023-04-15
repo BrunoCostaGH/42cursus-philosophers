@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/15 19:04:15 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/15 20:05:20 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ philosopher number N + 1.
 
 static void	philo_sleep(t_master *master, int id)
 {
-	int	time_to_sleep;
+	int			time_to_sleep;
 	t_philo		*philosopher;
 
 	time_to_sleep = master->time_to_sleep;

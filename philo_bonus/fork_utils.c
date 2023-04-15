@@ -6,11 +6,11 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/10 16:10:12 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/15 18:37:17 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/15 20:08:59 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "philo.h"
+#include "philo.h"
 
 void	clean_the_forks(t_philo *philosopher)
 {
@@ -26,9 +26,9 @@ void	clean_the_forks(t_philo *philosopher)
 void	check_fork_status(t_philo *philosopher, int id)
 {
 	sem_wait(philosopher->master_sem);
-	if(sem_wait(philosopher->fork_sem) == 0)
+	if (sem_wait(philosopher->fork_sem) == 0)
 	{
-		if(sem_wait(philosopher->fork_sem) == 0)
+		if (sem_wait(philosopher->fork_sem) == 0)
 		{
 			sem_wait(philosopher->message_sem);
 			print_message(1, id);

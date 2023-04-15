@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 15:50:10 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/14 15:14:05 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/15 20:07:29 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 */
 int	timestamp(void)
 {
-	long						ml_cur;
+	long					ml_cur;
 	static long				ml_ini;
 	struct timeval			cur_tv;
 	static struct timeval	ini_tv;

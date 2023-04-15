@@ -10,14 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "philo.h"
+#include "philo.h"
 
 void	clean_the_forks(t_master *master, int id)
 {
 	t_philo		*philosopher;
 	t_fork		*fork_1;
 	t_fork		*fork_2;
-	
+
 	philosopher = master->philo_table[id - 1];
 	fork_1 = master->forks_table[id - 1];
 	if (id < master->number_of_philosophers)
@@ -38,7 +38,7 @@ void	check_fork_status(t_master *master, int id)
 	t_philo		*philosopher;
 	t_fork		*fork_1;
 	t_fork		*fork_2;
-	
+
 	philosopher = master->philo_table[id - 1];
 	fork_1 = master->forks_table[id - 1];
 	if (id < master->number_of_philosophers)

@@ -6,15 +6,15 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:16:03 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/15 19:01:58 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/15 19:39:21 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void spectate(t_master *master)
+void	spectate(t_master *master)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < master->number_of_philosophers)
