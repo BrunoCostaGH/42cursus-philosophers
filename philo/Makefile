@@ -20,7 +20,7 @@ NAME=philo
 
 all: $(NAME)
 $(NAME): $(OBJS) $(DEPS)
-	@$(CC) $(OBJS) $(DEPS) -pthread -fsanitize=address -o $(NAME)
+	@$(CC) $(OBJS) $(DEPS) -pthread -o $(NAME)
 clean:
 	@rm $(OBJS)
 fclean: clean
