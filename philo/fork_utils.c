@@ -35,11 +35,9 @@ void	clean_the_forks(t_master *master, int id)
 
 void	check_fork_status(t_master *master, int id)
 {
-	t_philo		*philosopher;
 	t_fork		*fork_1;
 	t_fork		*fork_2;
 
-	philosopher = master->philo_table[id - 1];
 	fork_1 = master->forks_table[id - 1];
 	if (id < master->number_of_philosophers)
 		fork_2 = master->forks_table[id];
@@ -56,7 +54,7 @@ void	check_fork_status(t_master *master, int id)
 			print_message(master, 1, id);
 			fork_1->is_being_used = TRUE;
 			fork_2->is_being_used = TRUE;
-			philosopher->has_forks = 2;
+			master->philo_table[id - 1]->has_forks = 2;
 			pthread_mutex_unlock(&master->mutex_message);
 		}
 	}

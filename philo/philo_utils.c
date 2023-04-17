@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:03:40 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/30 19:52:34 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/17 17:51:50 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
 */
 int	timestamp(t_master *master)
 {
-	int						ml_cur;
-	static int				ml_ini;
+	long					ml_cur;
+	static long				ml_ini;
 	struct timeval			cur_tv;
 	static struct timeval	ini_tv;
 
@@ -79,6 +79,20 @@ void	print_message(t_master *master, int message_id, int id)
 		else if (message_id == 5)
 			printf("%d %d died\n", m_timestamp, id);
 	}
+}
+
+void	wait_action(t_master *master, int id, int time_to_wait)
+{
+	t_philo		*philosopher;
+
+	philosopher = master->philo_table[id - 1];
+	if (timestamp(master) + time_to_wait > philosopher->time_to_die)
+	{
+		usleep((philosopher->time_to_die - timestamp(master)) * 1000);
+		kill_philosopher(master, id);
+	}
+	else
+		usleep(time_to_wait * 1000);
 }
 
 void	kill_philosopher(t_master *master, int id)
