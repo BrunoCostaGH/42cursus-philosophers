@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:18:16 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/15 20:07:51 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/17 19:56:22 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,12 +69,16 @@ typedef struct s_master
 	struct s_philo	**philo_table;
 }	t_master;
 
-void		set_handler(void *func);
+void		spectate(t_master *master);
 void		free_master(t_master *master);
+void		routine(t_master *master, int id);
 void		print_message(int message_id, int id);
 void		clean_the_forks(t_philo *philosopher);
+void		proc_init(t_master *master, int *supervisor);
 void		kill_philosopher(t_philo *philosopher, int id);
 void		check_fork_status(t_philo *philosopher, int id);
+void		philo_semaphores_init(t_master *master, int id);
+void		wait_action(t_philo *philosopher, int id, int time_to_wait);
 
 int			timestamp(void);
 int			ft_atoi(const char *nptr);
