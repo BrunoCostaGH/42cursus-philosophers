@@ -6,19 +6,24 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/10 16:10:12 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/17 18:03:13 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/18 18:26:21 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	clean_the_forks(t_philo *philosopher)
+void	clean_the_forks(t_master *master, int id)
 {
+	t_philo	*philosopher;
+
+	philosopher = master->philo_table[id - 1];
 	if (philosopher->number_of_times_must_eat > 0)
 	{
 		if (philosopher->number_of_times_has_eaten == \
 			philosopher->number_of_times_must_eat)
-			exit(0);
+		{
+			kill_philosopher(master, id);
+		}
 	}
 	sem_post(philosopher->fork_sem);
 	sem_post(philosopher->fork_sem);

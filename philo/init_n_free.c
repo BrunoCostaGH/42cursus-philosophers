@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 15:23:18 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/03/25 14:12:23 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/17 20:28:39 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ void	free_master(t_master *master)
 	i = 0;
 	while (i != master->number_of_philosophers)
 	{
-		free(master->forks_table[i]);
-		pthread_mutex_destroy(&master->forks_table[i++]->mutex_fork);
+		pthread_mutex_destroy(&master->forks_table[i]->mutex_fork);
+		free(master->forks_table[i++]);
 	}
 	free(master->forks_table);
 	pthread_mutex_destroy(&master->mutex_routine);
