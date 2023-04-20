@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 15:50:10 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/19 17:58:59 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/04/20 00:49:34 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,21 +41,24 @@ int	timestamp(void)
 	[4] timestamp_in_ms X is thinking
 	[5] timestamp_in_ms X died
 */
-void	print_message(int message_id, int id)
+void	print_message(t_philo *philosopher, int message_id, int id)
 {
 	int	m_timestamp;
 
-	m_timestamp = timestamp();
-	if (message_id == 1)
-		printf("%d %d has taken a fork\n", m_timestamp, id);
-	else if (message_id == 2)
-		printf("%d %d is eating\n", m_timestamp, id);
-	else if (message_id == 3)
-		printf("%d %d is sleeping\n", m_timestamp, id);
-	else if (message_id == 4)
-		printf("%d %d is thinking\n", m_timestamp, id);
-	else if (message_id == 5)
-		printf("%d %d died\n", m_timestamp, id);
+	if (philosopher->is_alive)
+	{
+		m_timestamp = timestamp();
+		if (message_id == 1)
+			printf("%d %d has taken a fork\n", m_timestamp, id);
+		else if (message_id == 2)
+			printf("%d %d is eating\n", m_timestamp, id);
+		else if (message_id == 3)
+			printf("%d %d is sleeping\n", m_timestamp, id);
+		else if (message_id == 4)
+			printf("%d %d is thinking\n", m_timestamp, id);
+		else if (message_id == 5)
+			printf("%d %d died\n", m_timestamp, id);
+	}
 }
 
 void	philo_semaphores_init(t_master *master, int id)
@@ -66,8 +69,7 @@ void	philo_semaphores_init(t_master *master, int id)
 	philosopher->fork_sem = sem_open(master->fork_sem_name, 0);
 	philosopher->message_sem = sem_open(master->message_sem_name, 0);
 	philosopher->master_sem = sem_open(master->master_sem_name, 0);
-	if (!philosopher->death_sem)
-		philosopher->death_sem = sem_open(master->death_sem_name, 0);
+	philosopher->death_sem = sem_open(master->death_sem_name, 0);
 	if (!philosopher->fork_sem || !philosopher->message_sem || \
 	!philosopher->master_sem || !philosopher->death_sem)
 	{
@@ -97,8 +99,11 @@ void	kill_philosopher(t_master *master, int id)
 
 	i = 0;
 	philosopher = master->philo_table[id - 1];
-	sem_wait(philosopher->message_sem);
-	print_message(5, id);
-	while (i++ < master->number_of_philosophers)
-		sem_post(philosopher->death_sem);
+	if (philosopher->is_alive)
+	{
+		sem_wait(philosopher->message_sem);
+		print_message(philosopher, 5, id);
+		while (i++ < master->number_of_philosophers)
+			sem_post(philosopher->death_sem);
+	}
 }

@@ -74,11 +74,11 @@ typedef struct s_master
 
 int			timestamp(void);
 int			ft_atoi(const char *nptr);
+int			proc_init(t_master *master);
 
 void		free_master(t_master *master);
-void		print_message(int message_id, int id);
+void		print_message(t_philo *philosopher, int message_id, int id);
 void		clean_the_forks(t_master *master, int id);
-void		proc_init(t_master *master, int *supervisor);
 void		kill_philosopher(t_master *master, int id);
 void		check_fork_status(t_philo *philosopher, int id);
 void		philo_semaphores_init(t_master *master, int id);
