@@ -29,6 +29,7 @@ void	clean_the_forks(t_master *master, int id)
 				sem_post(philosopher->death_sem);
 		}
 	}
+	philosopher->has_forks = 0;
 	sem_post(philosopher->fork_sem);
 	sem_post(philosopher->fork_sem);
 }
