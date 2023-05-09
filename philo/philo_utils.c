@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:03:40 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/17 17:51:50 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/09 19:37:16 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,16 +41,30 @@ int	check_simulation_status(t_master *master)
 	int	i;
 
 	i = 0;
+	pthread_mutex_lock(&master->mutex_status);
 	while (i != master->number_of_philosophers)
 	{
 		if (master->philo_table[i]->is_alive == FALSE)
+		{
+			pthread_mutex_unlock(&master->mutex_message);
+			pthread_mutex_unlock(&master->mutex_time);
+			pthread_mutex_unlock(&master->mutex_routine);
+			pthread_mutex_unlock(&master->mutex_status);
 			return (1);
+		}
 		if (master->philo_table[i]->number_of_times_has_eaten > 0 \
 			&& master->philo_table[i]->number_of_times_has_eaten \
 			== master->number_of_times_each_philosopher_must_eat)
+		{
+			pthread_mutex_unlock(&master->mutex_message);
+			pthread_mutex_unlock(&master->mutex_time);
+			pthread_mutex_unlock(&master->mutex_routine);
+			pthread_mutex_unlock(&master->mutex_status);
 			return (1);
+		}
 		i++;
 	}
+	pthread_mutex_unlock(&master->mutex_status);
 	return (0);
 }
 
@@ -86,7 +100,7 @@ void	wait_action(t_master *master, int id, int time_to_wait)
 	t_philo		*philosopher;
 
 	philosopher = master->philo_table[id - 1];
-	if (timestamp(master) + time_to_wait > philosopher->time_to_die)
+	if (timestamp(master) + time_to_wait >= philosopher->time_to_die)
 	{
 		usleep((philosopher->time_to_die - timestamp(master)) * 1000);
 		kill_philosopher(master, id);
@@ -97,13 +111,13 @@ void	wait_action(t_master *master, int id, int time_to_wait)
 
 void	kill_philosopher(t_master *master, int id)
 {
-	pthread_mutex_lock(&master->mutex_status);
 	if (!check_simulation_status(master))
 	{
 		pthread_mutex_lock(&master->mutex_message);
 		print_message(master, 5, id);
+		pthread_mutex_lock(&master->mutex_status);
 		master->philo_table[id - 1]->is_alive = FALSE;
+		pthread_mutex_unlock(&master->mutex_status);
 		pthread_mutex_unlock(&master->mutex_message);
 	}
-	pthread_mutex_unlock(&master->mutex_status);
 }

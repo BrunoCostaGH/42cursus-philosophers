@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/09 16:20:03 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/09 19:08:25 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ static void	philo_sleep(t_master *master, int id)
 	master->philo_table[id - 1]->is_eating = FALSE;
 	master->philo_table[id - 1]->is_sleeping = TRUE;
 	pthread_mutex_unlock(&master->mutex_message);
-	if (timestamp(master) + time_to_sleep > philosopher->time_to_die)
+	if (timestamp(master) + time_to_sleep >= philosopher->time_to_die)
 	{
 		usleep((philosopher->time_to_die - timestamp(master)) * 1000);
 		kill_philosopher(master, id);
@@ -90,20 +90,14 @@ void	*routine(void *arg)
 	pthread_mutex_lock(&master->mutex_routine);
 	id = ++master->philo_id_temp;
 	pthread_mutex_unlock(&master->mutex_routine);
-	pthread_mutex_lock(&master->mutex_status);
 	master->philo_table[id - 1]->time_to_die += timestamp(master);
 	while (!check_simulation_status(master))
 	{
 		go_to_table(master, id);
 		if (master->philo_table[id - 1]->is_eating \
 			&& !check_simulation_status(master))
-		{
-			pthread_mutex_unlock(&master->mutex_status);
 			philo_sleep(master, id);
-			pthread_mutex_lock(&master->mutex_status);
-		}
 	}
-	pthread_mutex_unlock(&master->mutex_status);
 	return (0);
 }
 
