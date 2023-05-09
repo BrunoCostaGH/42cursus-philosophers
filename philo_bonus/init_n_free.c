@@ -6,20 +6,31 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:27:27 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/19 18:05:28 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/09 16:10:48 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	free_semaphores(t_master *master)
+{
+	sem_unlink(master->fork_sem_name);
+	sem_unlink(master->message_sem_name);
+	sem_unlink(master->master_sem_name);
+	sem_unlink(master->death_sem_name);
+}
 
 void	free_master(t_master *master)
 {
 	int	i;
 
 	i = 0;
-	while (i != master->number_of_philosophers)
-		free(master->philo_table[i++]);
-	free(master->philo_table);
+	if (master->number_of_philosophers > 0)
+	{
+		while (i != master->number_of_philosophers)
+			free(master->philo_table[i++]);
+		free(master->philo_table);
+	}
 	free(master);
 }
 
@@ -47,7 +58,6 @@ static void	philo_table_init(t_master *master)
 		master->philo_table[i]->number_of_times_must_eat = \
 				master->number_of_times_each_philosopher_must_eat;
 		master->philo_table[i]->philo_pid = 0;
-		master->philo_table[i]->death_sem = 0;
 		i++;
 	}
 }
@@ -71,8 +81,13 @@ static void	semaphores_init(t_master *master)
 	sem_unlink(master->death_sem_name);
 	master->death_sem = sem_open(master->death_sem_name, 0100, 0600, 0);
 	sem_close(master->death_sem);
+	master->philo_sem_name = "/philo_sem";
+	sem_unlink(master->philo_sem_name);
+	master->philo_sem = sem_open(master->philo_sem_name, 0100, 0600, \
+								master->number_of_philosophers);
+	sem_close(master->philo_sem);
 	if (!master->fork_sem || !master->message_sem || !master->master_sem || \
-	!master->death_sem)
+		!master->death_sem || !master->philo_sem)
 		printf("\e[1;41m===%d===ERROR: fork_sem failed on open\e[0m\n", 0);
 }
 
@@ -102,7 +117,10 @@ t_master	*master_init(char **argv)
 		master->number_of_times_each_philosopher_must_eat = ft_atoi(argv[5]);
 	else
 		master->number_of_times_each_philosopher_must_eat = 0;
-	semaphores_init(master);
-	philo_table_init(master);
+	if (master->number_of_philosophers > 0)
+	{
+		semaphores_init(master);
+		philo_table_init(master);
+	}
 	return (master);
 }

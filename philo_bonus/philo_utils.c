@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 15:50:10 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/20 00:49:34 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/09 14:24:24 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,13 @@ void	philo_semaphores_init(t_master *master, int id)
 	philosopher->message_sem = sem_open(master->message_sem_name, 0);
 	philosopher->master_sem = sem_open(master->master_sem_name, 0);
 	philosopher->death_sem = sem_open(master->death_sem_name, 0);
+	philosopher->philo_sem = sem_open(master->philo_sem_name, 0);
 	if (!philosopher->fork_sem || !philosopher->message_sem || \
-	!philosopher->master_sem || !philosopher->death_sem)
+		!philosopher->master_sem || !philosopher->death_sem || \
+		!philosopher->philo_sem)
 	{
 		printf("\e[1;41m===%d===ERROR: fork_sem failed on open\e[0m\n", id);
+		free_master(master);
 		exit(1);
 	}
 }

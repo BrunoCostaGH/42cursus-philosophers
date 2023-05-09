@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 CC=cc
-CFLAGS=-Wall -Werror -Wextra -g 
+CFLAGS=-Wall -Werror -Wextra
 DEPS=
 
 SRCS=philo.c philo_utils.c philo_eat.c fork_utils.c ft_atoi.c init_n_free.c

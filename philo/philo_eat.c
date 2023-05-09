@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 15:12:05 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/06 16:44:43 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/09 15:07:22 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ static void	philo_eat(t_master *master, int id)
 			philosopher->is_thinking = FALSE;
 			philosopher->is_eating = TRUE;
 			pthread_mutex_unlock(&master->mutex_message);
+			philosopher->time_to_die = timestamp(master) + master->time_to_die;
 			wait_action(master, id, master->time_to_eat);
 			if (check_simulation_status(master))
 				break ;
@@ -42,15 +43,11 @@ static void	philo_eat(t_master *master, int id)
 
 void	go_to_table(t_master *master, int id)
 {
-	int	*time_to_die;
-
-	time_to_die = &master->philo_table[id - 1]->time_to_die;
 	if (!check_simulation_status(master))
 	{
 		pthread_mutex_unlock(&master->mutex_status);
 		master->philo_table[id - 1]->is_sleeping = FALSE;
 		philo_eat(master, id);
-		*time_to_die = timestamp(master) + master->time_to_die;
 		pthread_mutex_lock(&master->mutex_status);
 	}
 }
