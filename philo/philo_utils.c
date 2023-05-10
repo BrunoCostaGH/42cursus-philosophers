@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:03:40 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/09 19:37:16 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/10 15:21:49 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,33 +39,29 @@ int	timestamp(t_master *master)
 int	check_simulation_status(t_master *master)
 {
 	int	i;
+	int	exit_overwrite;
 
 	i = 0;
+	exit_overwrite = 0;
 	pthread_mutex_lock(&master->mutex_status);
 	while (i != master->number_of_philosophers)
 	{
 		if (master->philo_table[i]->is_alive == FALSE)
-		{
-			pthread_mutex_unlock(&master->mutex_message);
-			pthread_mutex_unlock(&master->mutex_time);
-			pthread_mutex_unlock(&master->mutex_routine);
-			pthread_mutex_unlock(&master->mutex_status);
-			return (1);
-		}
+			exit_overwrite = 1;
 		if (master->philo_table[i]->number_of_times_has_eaten > 0 \
 			&& master->philo_table[i]->number_of_times_has_eaten \
 			== master->number_of_times_each_philosopher_must_eat)
-		{
-			pthread_mutex_unlock(&master->mutex_message);
-			pthread_mutex_unlock(&master->mutex_time);
-			pthread_mutex_unlock(&master->mutex_routine);
-			pthread_mutex_unlock(&master->mutex_status);
-			return (1);
-		}
+			exit_overwrite = 1;
 		i++;
 	}
+	if (exit_overwrite)
+	{
+		pthread_mutex_unlock(&master->mutex_message);
+		pthread_mutex_unlock(&master->mutex_time);
+		pthread_mutex_unlock(&master->mutex_routine);
+	}
 	pthread_mutex_unlock(&master->mutex_status);
-	return (0);
+	return (exit_overwrite);
 }
 
 /*

@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:16:03 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/09 16:11:55 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/10 18:09:13 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ static void	philo_eat(t_master *master, int time_to_eat, int id)
 			philosopher->is_eating = TRUE;
 			philosopher->time_to_die = timestamp() + master->time_to_die;
 			wait_action(master, id, time_to_eat);
-			philosopher->is_eating = FALSE;
 			philosopher->is_full = TRUE;
+			philosopher->is_eating = FALSE;
 			clean_the_forks(master, id);
 			philosopher->number_of_times_has_eaten++;
 			return ;
@@ -86,28 +86,18 @@ void	*routine(void *arg)
 
 int	main(int argc, char **argv)
 {
-	int			exit_overwrite;
 	t_master	*master;
 
-	if ((argc == 5 || argc == 6))
+	if ((argc == 5 || argc == 6) && is_valid(argv))
 	{
 		master = master_init(argv);
-		exit_overwrite = FALSE;
-		if (master->number_of_times_each_philosopher_must_eat < 0 || \
-			master->time_to_sleep < 0 || master->number_of_philosophers < 0 || \
-			master->time_to_die < 0 || master->time_to_eat < 0)
-		{
-			exit_overwrite = TRUE;
-			write(2, "Error!\nInvalid Arguments!\n", 26);
-		}
-		if (exit_overwrite == FALSE)
-		{
-			proc_init(master);
-			while (waitpid(master->philo_table[0]->philo_pid, NULL, 0) != -1)
-				;
-			free_semaphores(master);
-		}
+		proc_init(master);
+		while (waitpid(master->philo_table[0]->philo_pid, NULL, 0) != -1)
+			;
+		free_semaphores(master);
 		free_master(master);
 	}
+	else
+		write(2, "Error!\nInvalid Arguments!\n", 26);
 	return (0);
 }

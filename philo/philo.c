@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/09 19:08:25 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/10 15:48:02 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,15 +39,6 @@ philosopher dies.
 Any other philosopher number N sits between philosopher number N - 1 and 
 philosopher number N + 1.
 */
-
-static int	isvalid(t_master *master)
-{
-	if (master->number_of_times_each_philosopher_must_eat < 0 || \
-		master->time_to_sleep < 0 || master->number_of_philosophers < 0 || \
-		master->time_to_die < 0 || master->time_to_eat < 0)
-		return (0);
-	return (1);
-}
 
 static void	philo_sleep(t_master *master, int id)
 {
@@ -106,13 +97,11 @@ int	main(int argc, char **argv)
 	int				i;
 	t_master		*master;
 
-	if (argc == 5 || argc == 6)
+	if ((argc == 5 || argc == 6) && is_valid(argv))
 	{
 		i = 0;
 		master = master_init(argv);
-		if (!isvalid(master))
-			write(2, "Error!\nInvalid Arguments!\n", 26);
-		while (i != master->number_of_philosophers && isvalid(master))
+		while (i < master->number_of_philosophers)
 		{
 			if (pthread_create(&master->philo_table[i++]->thread, NULL, \
 				&routine, master))
@@ -120,10 +109,12 @@ int	main(int argc, char **argv)
 			usleep(100);
 		}
 		i = 0;
-		while (i != master->number_of_philosophers && isvalid(master))
+		while (i < master->number_of_philosophers)
 			if (pthread_join(master->philo_table[i++]->thread, NULL))
 				return (1);
 		free_master(master);
 	}
+	else
+		write(2, "Error!\nInvalid Arguments!\n", 26);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 15:23:18 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/09 16:06:18 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/10 15:28:15 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,16 @@ void	free_master(t_master *master)
 	int	i;
 
 	i = 0;
-	if (master->number_of_philosophers > 0)
+	while (i != master->number_of_philosophers)
+		free(master->philo_table[i++]);
+	free(master->philo_table);
+	i = 0;
+	while (i != master->number_of_philosophers)
 	{
-		while (i != master->number_of_philosophers)
-			free(master->philo_table[i++]);
-		free(master->philo_table);
-		i = 0;
-		while (i != master->number_of_philosophers)
-		{
-			pthread_mutex_destroy(&master->forks_table[i]->mutex_fork);
-			free(master->forks_table[i++]);
-		}
-		free(master->forks_table);
+		pthread_mutex_destroy(&master->forks_table[i]->mutex_fork);
+		free(master->forks_table[i++]);
 	}
+	free(master->forks_table);
 	pthread_mutex_destroy(&master->mutex_routine);
 	pthread_mutex_destroy(&master->mutex_message);
 	pthread_mutex_destroy(&master->mutex_status);
@@ -101,11 +98,8 @@ t_master	*master_init(char **argv)
 		master->number_of_times_each_philosopher_must_eat = ft_atoi(argv[5]);
 	else
 		master->number_of_times_each_philosopher_must_eat = 0;
-	if (master->number_of_philosophers > 0)
-	{
-		philo_table_init(master);
-		forks_table_init(master);
-	}
+	philo_table_init(master);
+	forks_table_init(master);
 	pthread_mutex_init(&master->mutex_routine, NULL);
 	pthread_mutex_init(&master->mutex_message, NULL);
 	pthread_mutex_init(&master->mutex_status, NULL);

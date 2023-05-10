@@ -6,13 +6,13 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 18:05:36 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/09 16:16:44 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/10 15:10:14 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	*kill_process(void *arg)
+void	*kill_thread(void *arg)
 {
 	t_master	*master;
 	t_philo		*philosopher;
@@ -21,17 +21,16 @@ void	*kill_process(void *arg)
 	philosopher = master->philo_table[master->philo_id - 1];
 	sem_wait(philosopher->death_sem);
 	philosopher->is_alive = FALSE;
-	usleep(1000);
 	sem_post(philosopher->master_sem);
 	sem_post(philosopher->fork_sem);
-	sem_post(philosopher->fork_sem);
+	usleep(1000);
 	sem_post(philosopher->message_sem);
 	while (philosopher->philo_pid != -1)
 		;
 	return (0);
 }
 
-static void	*fork_process(void *arg)
+static void	*fork_thread(void *arg)
 {
 	t_master	*master;
 	t_philo		*philosopher;
@@ -52,13 +51,13 @@ static void	proc_thread_create(t_master *master, int id)
 	philo_semaphores_init(master, id);
 	timestamp();
 	if (pthread_create(&master->philo_table[id - 1]->thread_main, NULL, \
-			&routine, master))
+	&routine, master))
 		return ;
 	if (pthread_create(&master->philo_table[id - 1]->thread_forks, NULL, \
-			&fork_process, master))
+	&fork_thread, master))
 		return ;
 	if (pthread_create(&master->philo_table[id - 1]->thread_vigilante, NULL, \
-			&kill_process, master))
+	&kill_thread, master))
 		return ;
 	if (pthread_join(master->philo_table[id - 1]->thread_main, NULL))
 		return ;
@@ -70,7 +69,6 @@ static void	proc_thread_create(t_master *master, int id)
 	sem_close(master->philo_table[id - 1]->fork_sem);
 	sem_close(master->philo_table[id - 1]->message_sem);
 	sem_close(master->philo_table[id - 1]->death_sem);
-	sem_close(master->philo_table[id - 1]->philo_sem);
 	free_master(master);
 	exit(0);
 }

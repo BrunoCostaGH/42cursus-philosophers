@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:21:25 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/04/17 17:51:39 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/10 15:48:42 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ typedef struct s_master
 	pthread_mutex_t	mutex_time;
 }	t_master;
 
+int			is_valid(char **arr);
 int			ft_atoi(const char *nptr);
 int			timestamp(t_master *master);
 int			check_simulation_status(t_master *master);
