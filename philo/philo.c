@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/10 15:48:02 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/13 10:39:07 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ philosopher number N + 1.
 
 static void	philo_sleep(t_master *master, int id)
 {
+	int			m_timestamp;
 	int			time_to_sleep;
 	t_philo		*philosopher;
 
@@ -49,16 +50,11 @@ static void	philo_sleep(t_master *master, int id)
 	philosopher = master->philo_table[id - 1];
 	pthread_mutex_lock(&master->mutex_message);
 	print_message(master, 3, id);
-	master->philo_table[id - 1]->is_eating = FALSE;
-	master->philo_table[id - 1]->is_sleeping = TRUE;
+	philosopher->is_eating = FALSE;
+	philosopher->is_sleeping = TRUE;
 	pthread_mutex_unlock(&master->mutex_message);
-	if (timestamp(master) + time_to_sleep >= philosopher->time_to_die)
-	{
-		usleep((philosopher->time_to_die - timestamp(master)) * 1000);
-		kill_philosopher(master, id);
-	}
-	else
-		usleep(time_to_sleep * 1000);
+	m_timestamp = timestamp(master);
+	wait_action(master, id, time_to_sleep, m_timestamp);
 }
 
 void	philo_think(t_master *master, int id)

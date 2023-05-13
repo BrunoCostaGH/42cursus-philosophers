@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:16:03 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/10 18:09:13 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/13 11:02:43 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	philo_sleep(t_master *master, int time_to_sleep, int id)
 	print_message(philosopher, 3, id);
 	sem_post(philosopher->message_sem);
 	philosopher->is_sleeping = TRUE;
-	wait_action(master, id, time_to_sleep);
+	wait_action(master, id, time_to_sleep, 0);
 	philosopher->is_sleeping = FALSE;
 }
 
@@ -33,31 +33,31 @@ static void	philo_think(t_philo *philosopher, int id)
 	philosopher->is_thinking = TRUE;
 }
 
-static void	philo_eat(t_master *master, int time_to_eat, int id)
+static void	philo_eat(t_master *master, t_philo *philo, int time_to_eat, int id)
 {
-	t_philo	*philosopher;
+	int		m_timestamp;
 
-	philosopher = master->philo_table[id - 1];
-	while (timestamp() <= philosopher->time_to_die && philosopher->is_alive)
+	while (timestamp() <= philo->time_to_die && philo->is_alive)
 	{
-		philosopher->is_full = FALSE;
-		if (philosopher->has_forks == 2 && philosopher->is_alive)
+		philo->is_full = FALSE;
+		if (philo->has_forks == 2 && philo->is_alive)
 		{
-			sem_wait(philosopher->message_sem);
-			print_message(philosopher, 2, id);
-			sem_post(philosopher->message_sem);
-			philosopher->is_thinking = FALSE;
-			philosopher->is_eating = TRUE;
-			philosopher->time_to_die = timestamp() + master->time_to_die;
-			wait_action(master, id, time_to_eat);
-			philosopher->is_full = TRUE;
-			philosopher->is_eating = FALSE;
+			sem_wait(philo->message_sem);
+			print_message(philo, 2, id);
+			sem_post(philo->message_sem);
+			philo->is_thinking = FALSE;
+			philo->is_eating = TRUE;
+			m_timestamp = timestamp();
+			philo->time_to_die = m_timestamp + master->time_to_die;
+			wait_action(master, id, time_to_eat, m_timestamp);
+			philo->is_full = TRUE;
+			philo->is_eating = FALSE;
 			clean_the_forks(master, id);
-			philosopher->number_of_times_has_eaten++;
+			philo->number_of_times_has_eaten++;
 			return ;
 		}
-		else if (!philosopher->is_thinking && philosopher->is_alive)
-			philo_think(philosopher, id);
+		else if (!philo->is_thinking && philo->is_alive)
+			philo_think(philo, id);
 	}
 	kill_philosopher(master, id);
 }
@@ -75,7 +75,7 @@ void	*routine(void *arg)
 	while (timestamp() <= philosopher->time_to_die && philosopher->is_alive)
 	{
 		if (philosopher->is_alive)
-			philo_eat(master, master->time_to_eat, id);
+			philo_eat(master, philosopher, master->time_to_eat, id);
 		if (philosopher->is_full && philosopher->is_alive)
 			philo_sleep(master, master->time_to_sleep, id);
 	}

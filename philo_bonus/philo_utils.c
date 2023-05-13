@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 15:50:10 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/10 15:07:34 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/13 10:46:35 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,13 +79,16 @@ void	philo_semaphores_init(t_master *master, int id)
 	}
 }
 
-void	wait_action(t_master *master, int id, int time_to_wait)
+void	wait_action(t_master *master, int id, int time_to_wait, int t_timestamp)
 {
 	int		m_timestamp;
 	t_philo	*philosopher;
 
 	philosopher = master->philo_table[id - 1];
-	m_timestamp = timestamp();
+	if (t_timestamp)
+		m_timestamp = t_timestamp;
+	else
+		m_timestamp = timestamp();
 	if (m_timestamp + time_to_wait >= philosopher->time_to_die)
 	{
 		usleep((philosopher->time_to_die - m_timestamp) * 1000);
