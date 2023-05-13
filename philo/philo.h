@@ -75,7 +75,7 @@ void		kill_philosopher(t_master *master, int id);
 void		check_fork_status(t_master *master, int id);
 void		print_message(t_master *master, int message_id, int id);
 void		wait_action(t_master *master, int id, int time_to_wait, \
-						int t_timestamp);
+						int m_timestamp);
 
 t_master	*master_init(char **argv);
 

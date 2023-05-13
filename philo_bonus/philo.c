@@ -6,11 +6,19 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:16:03 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/13 11:02:43 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/13 12:03:43 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+static void	philo_think(t_philo *philosopher, int id)
+{
+	sem_wait(philosopher->message_sem);
+	print_message(philosopher, 4, id);
+	sem_post(philosopher->message_sem);
+	philosopher->is_thinking = TRUE;
+}
 
 static void	philo_sleep(t_master *master, int time_to_sleep, int id)
 {
@@ -23,14 +31,8 @@ static void	philo_sleep(t_master *master, int time_to_sleep, int id)
 	philosopher->is_sleeping = TRUE;
 	wait_action(master, id, time_to_sleep, 0);
 	philosopher->is_sleeping = FALSE;
-}
-
-static void	philo_think(t_philo *philosopher, int id)
-{
-	sem_wait(philosopher->message_sem);
-	print_message(philosopher, 4, id);
-	sem_post(philosopher->message_sem);
-	philosopher->is_thinking = TRUE;
+	philo_think(philosopher, id);
+	wait_action(master, id, 5, timestamp());
 }
 
 static void	philo_eat(t_master *master, t_philo *philo, int time_to_eat, int id)

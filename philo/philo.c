@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/13 10:39:07 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/13 11:50:32 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ philosopher number N + 1.
 
 static void	philo_sleep(t_master *master, int id)
 {
-	int			m_timestamp;
 	int			time_to_sleep;
 	t_philo		*philosopher;
 
@@ -53,8 +52,9 @@ static void	philo_sleep(t_master *master, int id)
 	philosopher->is_eating = FALSE;
 	philosopher->is_sleeping = TRUE;
 	pthread_mutex_unlock(&master->mutex_message);
-	m_timestamp = timestamp(master);
-	wait_action(master, id, time_to_sleep, m_timestamp);
+	wait_action(master, id, time_to_sleep, timestamp(master));
+	philo_think(master, id);
+	wait_action(master, id, 5, timestamp(master));
 }
 
 void	philo_think(t_master *master, int id)
