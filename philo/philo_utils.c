@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:03:40 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/13 11:15:09 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/13 14:12:54 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,12 @@ int	timestamp(t_master *master)
 	struct timeval			cur_tv;
 	static struct timeval	ini_tv;
 
+	pthread_mutex_lock(&master->mutex_time);
 	if (!ini_tv.tv_sec)
 	{
 		gettimeofday(&ini_tv, NULL);
 		ml_ini = (ini_tv.tv_sec * 1000000 + ini_tv.tv_usec);
 	}
-	pthread_mutex_lock(&master->mutex_time);
 	gettimeofday(&cur_tv, NULL);
 	ml_cur = (cur_tv.tv_sec * 1000000 + cur_tv.tv_usec);
 	pthread_mutex_unlock(&master->mutex_time);
@@ -53,12 +53,6 @@ int	check_simulation_status(t_master *master)
 			== master->number_of_times_each_philosopher_must_eat)
 			exit_overwrite = 1;
 		i++;
-	}
-	if (exit_overwrite)
-	{
-		pthread_mutex_unlock(&master->mutex_message);
-		pthread_mutex_unlock(&master->mutex_time);
-		pthread_mutex_unlock(&master->mutex_routine);
 	}
 	pthread_mutex_unlock(&master->mutex_status);
 	return (exit_overwrite);
