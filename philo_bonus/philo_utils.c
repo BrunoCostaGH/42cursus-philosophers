@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 15:50:10 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/13 12:13:27 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/14 13:19:26 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	print_message(t_philo *philosopher, int message_id, int id)
 {
 	int	m_timestamp;
 
-	if (philosopher->is_alive)
+	if (access_philosopher_status(philosopher, 0))
 	{
 		m_timestamp = timestamp();
 		if (message_id == 1)
@@ -58,24 +58,6 @@ void	print_message(t_philo *philosopher, int message_id, int id)
 			printf("%d %d is thinking\n", m_timestamp, id);
 		else if (message_id == 5)
 			printf("%d %d died\n", m_timestamp, id);
-	}
-}
-
-void	philo_semaphores_init(t_master *master, int id)
-{
-	t_philo	*philosopher;
-
-	philosopher = master->philo_table[id - 1];
-	philosopher->fork_sem = sem_open(master->fork_sem_name, 0);
-	philosopher->message_sem = sem_open(master->message_sem_name, 0);
-	philosopher->master_sem = sem_open(master->master_sem_name, 0);
-	philosopher->death_sem = sem_open(master->death_sem_name, 0);
-	if (!philosopher->fork_sem || !philosopher->message_sem || \
-		!philosopher->master_sem || !philosopher->death_sem)
-	{
-		printf("\e[1;41m===%d===ERROR: fork_sem failed on open\e[0m\n", id);
-		free_master(master);
-		exit(1);
 	}
 }
 
@@ -93,6 +75,28 @@ void	wait_action(t_master *master, int id, int time_to_wait, int m_timestamp)
 		usleep(time_to_wait * 1000);
 }
 
+/*
+ * status: 0 check if philosopher is alive
+ * status: 1 set philosopher as dead
+ * */
+int	access_philosopher_status(t_philo *philosopher, int status)
+{
+	int	result;
+
+	sem_wait(philosopher->vigilante_sem);
+	if (status == 0 && philosopher->is_alive)
+		result = TRUE;
+	else if (status == 0)
+		result = FALSE;
+	if (status == 1)
+	{
+		philosopher->is_alive = FALSE;
+		result = FALSE;
+	}
+	sem_post(philosopher->vigilante_sem);
+	return (result);
+}
+
 void	kill_philosopher(t_master *master, int id)
 {
 	int		i;
@@ -100,11 +104,11 @@ void	kill_philosopher(t_master *master, int id)
 
 	i = 0;
 	philosopher = master->philo_table[id - 1];
-	if (philosopher->is_alive)
+	if (access_philosopher_status(philosopher, 0))
 	{
 		sem_wait(philosopher->message_sem);
 		print_message(philosopher, 5, id);
-		philosopher->is_alive = FALSE;
+		access_philosopher_status(philosopher, 1);
 		while (i++ < master->number_of_philosophers)
 			sem_post(philosopher->death_sem);
 	}

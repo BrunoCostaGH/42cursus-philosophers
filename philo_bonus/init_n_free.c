@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:27:27 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/10 15:46:23 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/14 15:46:30 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,11 @@
 
 void	free_semaphores(t_master *master)
 {
+	sem_unlink(master->m_fork_sem_name);
 	sem_unlink(master->fork_sem_name);
 	sem_unlink(master->message_sem_name);
-	sem_unlink(master->master_sem_name);
 	sem_unlink(master->death_sem_name);
+	sem_unlink(master->vigilante_sem_name);
 }
 
 void	free_master(t_master *master)
@@ -61,6 +62,10 @@ static void	philo_table_init(t_master *master)
 
 static void	semaphores_init(t_master *master)
 {
+	master->m_fork_sem_name = "/m_fork_sem";
+	sem_unlink(master->m_fork_sem_name);
+	master->m_fork_sem = sem_open(master->m_fork_sem_name, 0100, 0600, 1);
+	sem_close(master->m_fork_sem);
 	master->fork_sem_name = "/fork_sem";
 	sem_unlink(master->fork_sem_name);
 	master->fork_sem = sem_open(master->fork_sem_name, 0100, 0600, \
@@ -70,16 +75,16 @@ static void	semaphores_init(t_master *master)
 	sem_unlink(master->message_sem_name);
 	master->message_sem = sem_open(master->message_sem_name, 0100, 0600, 1);
 	sem_close(master->message_sem);
-	master->master_sem_name = "/master_sem";
-	sem_unlink(master->master_sem_name);
-	master->master_sem = sem_open(master->master_sem_name, 0100, 0600, 1);
-	sem_close(master->master_sem);
 	master->death_sem_name = "/death_sem";
 	sem_unlink(master->death_sem_name);
 	master->death_sem = sem_open(master->death_sem_name, 0100, 0600, 0);
 	sem_close(master->death_sem);
-	if (!master->fork_sem || !master->message_sem || !master->master_sem || \
-		!master->death_sem)
+	master->vigilante_sem_name = "/vigilante_sem";
+	sem_unlink(master->vigilante_sem_name);
+	master->vigilante_sem = sem_open(master->vigilante_sem_name, 0100, 0600, 1);
+	sem_close(master->vigilante_sem);
+	if (!master->fork_sem || !master->message_sem || !master->m_fork_sem || \
+		!master->death_sem || !master->vigilante_sem)
 		printf("\e[1;41m===%d===ERROR: fork_sem failed on open\e[0m\n", 0);
 }
 

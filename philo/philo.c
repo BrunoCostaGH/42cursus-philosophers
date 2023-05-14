@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 21:18:23 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/13 11:50:32 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/05/14 17:03:24 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,13 +101,12 @@ int	main(int argc, char **argv)
 		{
 			if (pthread_create(&master->philo_table[i++]->thread, NULL, \
 				&routine, master))
-				return (1);
-			usleep(100);
+				break ;
 		}
 		i = 0;
 		while (i < master->number_of_philosophers)
 			if (pthread_join(master->philo_table[i++]->thread, NULL))
-				return (1);
+				break ;
 		free_master(master);
 	}
 	else

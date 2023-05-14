@@ -15,7 +15,7 @@ CFLAGS=-Wall -Werror -Wextra
 DEPS=
 
 SRCS=philo.c philo_utils.c proc_utils.c fork_utils.c init_n_free.c ft_atoi.c \
-error.c
+philo_eat.c error.c
 OBJS=$(SRCS:.c=.o)
 NAME=philo
 
