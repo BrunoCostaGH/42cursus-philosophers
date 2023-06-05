@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:03:40 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/13 14:12:54 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/06/05 23:41:27 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,18 @@ int	check_simulation_status(t_master *master)
 	while (i != master->number_of_philosophers)
 	{
 		if (master->philo_table[i]->is_alive == FALSE)
+		{
 			exit_overwrite = 1;
+			break ;
+		}
 		if (master->philo_table[i]->number_of_times_has_eaten > 0 \
 			&& master->philo_table[i]->number_of_times_has_eaten \
 			== master->number_of_times_each_philosopher_must_eat)
-			exit_overwrite = 1;
+			exit_overwrite++;
 		i++;
 	}
+	if (exit_overwrite > 1 && exit_overwrite != master->number_of_philosophers)
+		exit_overwrite = 0;
 	pthread_mutex_unlock(&master->mutex_status);
 	return (exit_overwrite);
 }
