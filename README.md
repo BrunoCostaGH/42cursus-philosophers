@@ -1,4 +1,4 @@
-# 42cursus-philosophers ([Subject](https://cdn.intra.42.fr/pdf/pdf/65766/en.subject.pdf))
+# 42cursus-philosophers ([Subject](https://github.com/BrunoCostaGH/42cursus-philosophers/blob/master/.github/42cursus-philosophers.pdf))
 
 ## Description
 Eat, Sleep, Spaghetti, repeat. This project is about learning how threads work by precisely timing a group of philosophers on when to pick up forks and eat spaghetti without dying from hunger.
