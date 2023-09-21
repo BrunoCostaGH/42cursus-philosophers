@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/10 16:10:12 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/14 17:05:39 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/09/21 16:03:52 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,15 @@
 
 void	clean_the_forks(t_master *master, int id)
 {
-	int		i;
 	t_philo	*philosopher;
 
-	i = 0;
-	philosopher = master->philo_table[id - 1];
+	philosopher = master->philo_table[id];
+	philosopher->number_of_times_has_eaten++;
 	if (philosopher->number_of_times_must_eat > 0)
 	{
 		if (philosopher->number_of_times_has_eaten == \
 			philosopher->number_of_times_must_eat)
-		{
-			sem_wait(philosopher->message_sem);
-			while (i++ < master->number_of_philosophers)
-				sem_post(philosopher->death_sem);
-		}
+			sem_post(philosopher->master_sem);
 	}
 	sem_wait(philosopher->vigilante_sem);
 	philosopher->has_forks = 0;

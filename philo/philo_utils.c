@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:03:40 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/13 14:12:54 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/09/20 20:27:31 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,15 @@
 */
 int	timestamp(t_master *master)
 {
-	long					ml_cur;
-	static long				ml_ini;
-	struct timeval			cur_tv;
-	static struct timeval	ini_tv;
+	static long		ml_ini;
+	long			ml_cur;
+	struct timeval	timeval;
 
 	pthread_mutex_lock(&master->mutex_time);
-	if (!ini_tv.tv_sec)
-	{
-		gettimeofday(&ini_tv, NULL);
-		ml_ini = (ini_tv.tv_sec * 1000000 + ini_tv.tv_usec);
-	}
-	gettimeofday(&cur_tv, NULL);
-	ml_cur = (cur_tv.tv_sec * 1000000 + cur_tv.tv_usec);
+	gettimeofday(&timeval, NULL);
+	ml_cur = (timeval.tv_sec * 1000000 + timeval.tv_usec);
+	if (!ml_ini)
+		ml_ini = ml_cur;
 	pthread_mutex_unlock(&master->mutex_time);
 	return ((ml_cur - ml_ini) * 0.001);
 }
@@ -47,13 +43,18 @@ int	check_simulation_status(t_master *master)
 	while (i != master->number_of_philosophers)
 	{
 		if (master->philo_table[i]->is_alive == FALSE)
+		{
 			exit_overwrite = 1;
+			break ;
+		}
 		if (master->philo_table[i]->number_of_times_has_eaten > 0 \
 			&& master->philo_table[i]->number_of_times_has_eaten \
 			== master->number_of_times_each_philosopher_must_eat)
-			exit_overwrite = 1;
+			exit_overwrite++;
 		i++;
 	}
+	if (exit_overwrite > 1 && exit_overwrite != master->number_of_philosophers)
+		exit_overwrite = 0;
 	pthread_mutex_unlock(&master->mutex_status);
 	return (exit_overwrite);
 }

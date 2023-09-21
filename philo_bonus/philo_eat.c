@@ -19,7 +19,7 @@ static void	philo_eat(t_master *master, int id)
 	t_philo	*philosopher;
 
 	time_to_eat = master->time_to_eat;
-	philosopher = master->philo_table[id - 1];
+	philosopher = master->philo_table[id];
 	if (access_philosopher_status(philosopher, 0))
 	{
 		sem_wait(philosopher->message_sem);
@@ -35,7 +35,6 @@ static void	philo_eat(t_master *master, int id)
 		philosopher->is_eating = FALSE;
 		sem_post(philosopher->vigilante_sem);
 		clean_the_forks(master, id);
-		philosopher->number_of_times_has_eaten++;
 	}
 }
 
@@ -43,7 +42,7 @@ void	go_to_table(t_master *master, int id)
 {
 	t_philo	*philosopher;
 
-	philosopher = master->philo_table[id - 1];
+	philosopher = master->philo_table[id];
 	while (timestamp() <= philosopher->time_to_die && \
 	access_philosopher_status(philosopher, 0))
 	{
