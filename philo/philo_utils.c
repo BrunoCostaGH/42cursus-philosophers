@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:03:40 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/06/05 23:41:27 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/09/20 20:27:31 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,15 @@
 */
 int	timestamp(t_master *master)
 {
-	long					ml_cur;
-	static long				ml_ini;
-	struct timeval			cur_tv;
-	static struct timeval	ini_tv;
+	static long		ml_ini;
+	long			ml_cur;
+	struct timeval	timeval;
 
 	pthread_mutex_lock(&master->mutex_time);
-	if (!ini_tv.tv_sec)
-	{
-		gettimeofday(&ini_tv, NULL);
-		ml_ini = (ini_tv.tv_sec * 1000000 + ini_tv.tv_usec);
-	}
-	gettimeofday(&cur_tv, NULL);
-	ml_cur = (cur_tv.tv_sec * 1000000 + cur_tv.tv_usec);
+	gettimeofday(&timeval, NULL);
+	ml_cur = (timeval.tv_sec * 1000000 + timeval.tv_usec);
+	if (!ml_ini)
+		ml_ini = ml_cur;
 	pthread_mutex_unlock(&master->mutex_time);
 	return ((ml_cur - ml_ini) * 0.001);
 }
