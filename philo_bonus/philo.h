@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:18:16 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/14 17:12:30 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/09/26 17:26:45 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ typedef struct s_philo
 	sem_t		*message_sem;
 	sem_t		*death_sem;
 	sem_t		*vigilante_sem;
+	sem_t		*master_sem;
 	pthread_t	thread_main;
 	pthread_t	thread_forks;
 	pthread_t	thread_vigilante;
@@ -68,11 +69,13 @@ typedef struct s_master
 	char			*message_sem_name;
 	char			*death_sem_name;
 	char			*vigilante_sem_name;
+	char			*master_sem_name;
 	sem_t			*m_fork_sem;
 	sem_t			*fork_sem;
 	sem_t			*message_sem;
 	sem_t			*death_sem;
 	sem_t			*vigilante_sem;
+	sem_t			*master_sem;
 	struct s_philo	**philo_table;
 }	t_master;
 
@@ -91,7 +94,7 @@ void		kill_philosopher(t_master *master, int id);
 void		check_fork_status(t_philo *philosopher, int id);
 void		print_message(t_philo *philosopher, int message_id, int id);
 void		wait_action(t_master *master, int id, int time_to_wait, \
-						int m_timestamp);
+						int timestamp);
 
 void		*routine(void *arg);
 void		*kill_thread(void *arg);

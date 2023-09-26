@@ -19,19 +19,15 @@
 */
 int	timestamp(void)
 {
-	long					ml_cur;
-	static long				ml_ini;
-	struct timeval			cur_tv;
-	static struct timeval	ini_tv;
+	static long		ml_ini;
+	long			ml_cur;
+	struct timeval	timeval;
 
-	if (!ini_tv.tv_sec)
-	{
-		gettimeofday(&ini_tv, NULL);
-		ml_ini = (ini_tv.tv_sec * 1000000 + ini_tv.tv_usec);
-	}
-	gettimeofday(&cur_tv, NULL);
-	ml_cur = (cur_tv.tv_sec * 1000000 + cur_tv.tv_usec);
-	return ((ml_cur - ml_ini) / 1000);
+	gettimeofday(&timeval, NULL);
+	ml_cur = (timeval.tv_sec * 1000000 + timeval.tv_usec);
+	if (!ml_ini)
+		ml_ini = ml_cur;
+	return ((ml_cur - ml_ini) * 0.001);
 }
 
 /*
@@ -61,16 +57,16 @@ void	print_message(t_philo *philosopher, int message_id, int id)
 	}
 }
 
-void	wait_action(t_master *master, int id, int time_to_wait, int m_timestamp)
+void	wait_action(t_master *master, int id, int time_to_wait, int timestamp)
 {
 	t_philo			*philosopher;
 	unsigned int	wait_sum;
 
-	philosopher = master->philo_table[id - 1];
-	wait_sum = m_timestamp + time_to_wait;
+	philosopher = master->philo_table[id];
+	wait_sum = timestamp + time_to_wait;
 	if (wait_sum > (unsigned int)philosopher->time_to_die)
 	{
-		usleep((philosopher->time_to_die - m_timestamp) * 1000);
+		usleep((philosopher->time_to_die - timestamp) * 1000);
 		kill_philosopher(master, id);
 	}
 	else
@@ -105,13 +101,16 @@ void	kill_philosopher(t_master *master, int id)
 	t_philo	*philosopher;
 
 	i = 0;
-	philosopher = master->philo_table[id - 1];
+	philosopher = master->philo_table[id];
 	if (access_philosopher_status(philosopher, 0))
 	{
 		sem_wait(philosopher->message_sem);
 		print_message(philosopher, 5, id);
 		access_philosopher_status(philosopher, 1);
 		while (i++ < master->number_of_philosophers)
+		{
 			sem_post(philosopher->death_sem);
+			sem_post(philosopher->master_sem);
+		}
 	}
 }

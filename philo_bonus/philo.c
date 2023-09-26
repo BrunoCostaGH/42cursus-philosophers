@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:16:03 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/09/26 17:07:12 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/09/21 16:47:36 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static void	philo_sleep(t_master *master, int time_to_sleep, int id)
 {
 	t_philo	*philosopher;
 
-	philosopher = master->philo_table[id - 1];
+	philosopher = master->philo_table[id];
 	sem_wait(philosopher->message_sem);
 	print_message(philosopher, 3, id);
 	sem_post(philosopher->message_sem);
@@ -41,7 +41,7 @@ void	*routine(void *arg)
 
 	master = (t_master *)arg;
 	id = master->philo_id;
-	philosopher = master->philo_table[id - 1];
+	philosopher = master->philo_table[id];
 	philosopher->time_to_die += timestamp();
 	while (timestamp() <= philosopher->time_to_die && \
 			access_philosopher_status(philosopher, 0))
@@ -54,15 +54,47 @@ void	*routine(void *arg)
 	return (0);
 }
 
+void	*the_master(t_master *master)
+{
+	int			i;
+
+	i = 0;
+	master->philo_table[0]->master_sem = sem_open(master->master_sem_name, 0);
+	master->philo_table[0]->message_sem = sem_open(master->message_sem_name, 0);
+	master->philo_table[0]->death_sem = sem_open(master->death_sem_name, 0);
+	while (i < master->number_of_philosophers)
+	{
+		sem_wait(master->philo_table[0]->master_sem);
+		i++;
+	}
+	while (i-- > 0)
+		sem_post(master->philo_table[0]->death_sem);
+	sem_close(master->philo_table[0]->master_sem);
+	sem_close(master->philo_table[0]->message_sem);
+	sem_close(master->philo_table[0]->death_sem);
+	return (0);
+}
+
 int	main(int argc, char **argv)
 {
 	t_master	*master;
+	pid_t		pid;
 
 	if ((argc == 5 || argc == 6) && is_valid(argv))
 	{
 		master = master_init(argv);
 		proc_init(master);
-		while (waitpid(master->philo_table[0]->philo_pid, NULL, 0) != -1)
+		pid = fork();
+		if (pid == 0)
+		{
+			the_master(master);
+			free_master(master);
+			exit(0);
+		}
+		else
+			while (waitpid(master->philo_table[1]->philo_pid, NULL, 0) != -1)
+				;
+		while (waitpid(-1, NULL, 0) != -1)
 			;
 		free_semaphores(master);
 		free_master(master);
