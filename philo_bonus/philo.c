@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:16:03 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/14 17:12:12 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/09/26 17:07:12 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	philo_sleep(t_master *master, int time_to_sleep, int id)
 	print_message(philosopher, 3, id);
 	sem_post(philosopher->message_sem);
 	philosopher->is_sleeping = TRUE;
-	wait_action(master, id, time_to_sleep, 0);
+	wait_action(master, id, time_to_sleep, timestamp());
 	philosopher->is_sleeping = FALSE;
 }
 
