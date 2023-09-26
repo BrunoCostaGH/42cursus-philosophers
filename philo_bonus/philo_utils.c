@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 15:50:10 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/09/26 17:18:20 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/09/21 17:06:56 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,12 @@ void	print_message(t_philo *philosopher, int message_id, int id)
 	}
 }
 
-void	wait_action(t_master *master, int id, int time_to_wait, int timestamp)
+void	wait_action(t_master *master, int id, long time_to_wait, int timestamp)
 {
-	t_philo			*philosopher;
-	unsigned int	wait_sum;
+	t_philo	*philosopher;
 
 	philosopher = master->philo_table[id];
-	wait_sum = timestamp + time_to_wait;
-	if (wait_sum > (unsigned int)philosopher->time_to_die)
+	if (timestamp + time_to_wait > philosopher->time_to_die)
 	{
 		usleep((philosopher->time_to_die - timestamp) * 1000);
 		kill_philosopher(master, id);

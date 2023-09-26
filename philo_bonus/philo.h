@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:18:16 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/09/26 17:26:45 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/09/20 21:13:49 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,8 @@ void		philo_think(t_philo *philosopher, int id);
 void		kill_philosopher(t_master *master, int id);
 void		check_fork_status(t_philo *philosopher, int id);
 void		print_message(t_philo *philosopher, int message_id, int id);
-void		wait_action(t_master *master, int id, int time_to_wait, \
-						int timestamp);
+void		wait_action(t_master *master, int id, long time_to_wait, \
+						int m_timestamp);
 
 void		*routine(void *arg);
 void		*kill_thread(void *arg);
