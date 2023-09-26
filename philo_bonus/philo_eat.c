@@ -12,11 +12,11 @@
 
 #include "philo.h"
 
-static void	philo_eat(t_master *master, int id)
+static void	philo_eat(t_master *master, unsigned int id)
 {
-	int		time_to_eat;
-	int		m_timestamp;
-	t_philo	*philosopher;
+	unsigned int	time_to_eat;
+	unsigned int	m_timestamp;
+	t_philo			*philosopher;
 
 	time_to_eat = master->time_to_eat;
 	philosopher = master->philo_table[id];
@@ -38,7 +38,7 @@ static void	philo_eat(t_master *master, int id)
 	}
 }
 
-void	go_to_table(t_master *master, int id)
+void	go_to_table(t_master *master, unsigned int id)
 {
 	t_philo	*philosopher;
 

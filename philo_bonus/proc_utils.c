@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 18:05:36 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/09/21 16:19:38 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/09/26 18:39:04 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static void	*fork_thread(void *arg)
 	return (0);
 }
 
-static void	philo_semaphores_init(t_master *master, int id)
+static void	philo_semaphores_init(t_master *master, unsigned int id)
 {
 	t_philo	*philosopher;
 
@@ -72,7 +72,7 @@ static void	philo_semaphores_init(t_master *master, int id)
 	}
 }
 
-static void	proc_thread_create(t_master *master, int id)
+static void	proc_thread_create(t_master *master, unsigned int id)
 {
 	philo_semaphores_init(master, id);
 	timestamp();
@@ -103,8 +103,8 @@ static void	proc_thread_create(t_master *master, int id)
 
 void	proc_init(t_master *master)
 {
-	int		i;
-	pid_t	pid;
+	unsigned int	i;
+	pid_t			pid;
 
 	i = 1;
 	while (i < master->number_of_philosophers + 1)

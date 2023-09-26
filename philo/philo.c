@@ -40,10 +40,10 @@ Any other philosopher number N sits between philosopher number N - 1 and
 philosopher number N + 1.
 */
 
-static void	philo_sleep(t_master *master, int id)
+static void	philo_sleep(t_master *master, unsigned int id)
 {
-	int			time_to_sleep;
-	t_philo		*philosopher;
+	unsigned int	time_to_sleep;
+	t_philo			*philosopher;
 
 	time_to_sleep = master->time_to_sleep;
 	philosopher = master->philo_table[id - 1];
@@ -57,7 +57,7 @@ static void	philo_sleep(t_master *master, int id)
 	wait_action(master, id, 5, timestamp(master));
 }
 
-void	philo_think(t_master *master, int id)
+void	philo_think(t_master *master, unsigned int id)
 {
 	t_philo		*philosopher;
 
@@ -70,12 +70,12 @@ void	philo_think(t_master *master, int id)
 
 void	*routine(void *arg)
 {
-	int			id;
-	t_master	*master;
+	unsigned int	id;
+	t_master		*master;
 
 	master = (t_master *)arg;
 	pthread_mutex_lock(&master->mutex_routine);
-	id = ++master->philo_id_temp;
+	id = ++master->philo_id;
 	pthread_mutex_unlock(&master->mutex_routine);
 	master->philo_table[id - 1]->time_to_die += timestamp(master);
 	while (!check_simulation_status(master))
@@ -90,7 +90,7 @@ void	*routine(void *arg)
 
 int	main(int argc, char **argv)
 {
-	int				i;
+	unsigned int	i;
 	t_master		*master;
 
 	if ((argc == 5 || argc == 6) && is_valid(argv))

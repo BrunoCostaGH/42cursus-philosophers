@@ -6,13 +6,13 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 15:19:26 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/06 16:48:21 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/09/26 18:22:07 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	clean_the_forks(t_master *master, int id)
+void	clean_the_forks(t_master *master, unsigned int id)
 {
 	t_philo		*philosopher;
 	t_fork		*fork_1;
@@ -33,7 +33,7 @@ void	clean_the_forks(t_master *master, int id)
 	philosopher->has_forks = FALSE;
 }
 
-static void	grab_fork(t_master *master, t_fork *fork, int id)
+static void	grab_fork(t_master *master, t_fork *fork, unsigned int id)
 {
 	pthread_mutex_lock(&master->mutex_message);
 	print_message(master, 1, id);
@@ -42,7 +42,7 @@ static void	grab_fork(t_master *master, t_fork *fork, int id)
 	pthread_mutex_unlock(&master->mutex_message);
 }
 
-void	check_fork_status(t_master *master, int id)
+void	check_fork_status(t_master *master, unsigned int id)
 {
 	t_fork		*fork_1;
 	t_fork		*fork_2;

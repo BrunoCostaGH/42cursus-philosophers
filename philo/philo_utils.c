@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:03:40 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/09/20 20:27:31 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/09/26 18:31:31 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 		Converts the seconds into microseconds for same unit calculation.
 		Subtracts initial time to current time for current time stamp.
 */
-int	timestamp(t_master *master)
+unsigned int	timestamp(t_master *master)
 {
 	static long		ml_ini;
 	long			ml_cur;
@@ -34,8 +34,8 @@ int	timestamp(t_master *master)
 
 int	check_simulation_status(t_master *master)
 {
-	int	i;
-	int	exit_overwrite;
+	unsigned int	i;
+	unsigned int	exit_overwrite;
 
 	i = 0;
 	exit_overwrite = 0;
@@ -66,7 +66,8 @@ int	check_simulation_status(t_master *master)
 	[4] timestamp_in_ms X is thinking
 	[5] timestamp_in_ms X died
 */
-void	print_message(t_master *master, int message_id, int id)
+void	print_message(t_master *master, unsigned int message_id, \
+						unsigned int id)
 {
 	int	m_timestamp;
 
@@ -86,21 +87,25 @@ void	print_message(t_master *master, int message_id, int id)
 	}
 }
 
-void	wait_action(t_master *master, int id, int time_to_wait, int m_timestamp)
+void	wait_action(t_master *master, unsigned int id, \
+					unsigned int time_to_wait, \
+					unsigned int timestamp)
 {
-	t_philo		*philosopher;
+	t_philo			*philosopher;
+	unsigned int	wait_sum;
 
 	philosopher = master->philo_table[id - 1];
-	if (m_timestamp + time_to_wait > philosopher->time_to_die)
+	wait_sum = timestamp + time_to_wait;
+	if (wait_sum > philosopher->time_to_die)
 	{
-		usleep((philosopher->time_to_die - m_timestamp) * 1000);
+		usleep((philosopher->time_to_die - timestamp) * 1000);
 		kill_philosopher(master, id);
 	}
 	else
 		usleep(time_to_wait * 1000);
 }
 
-void	kill_philosopher(t_master *master, int id)
+void	kill_philosopher(t_master *master, unsigned int id)
 {
 	if (!check_simulation_status(master))
 	{
