@@ -24,7 +24,7 @@ void	free_semaphores(t_master *master)
 
 void	free_master(t_master *master)
 {
-	int	i;
+	unsigned int	i;
 
 	i = 0;
 	while (i != master->number_of_philosophers + 1)
@@ -35,8 +35,8 @@ void	free_master(t_master *master)
 
 static void	philo_table_init(t_master *master)
 {
-	int		i;
-	int		number_of_philosophers;
+	unsigned int	i;
+	unsigned int	number_of_philosophers;
 
 	i = 0;
 	number_of_philosophers = master->number_of_philosophers;

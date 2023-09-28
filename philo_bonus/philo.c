@@ -12,7 +12,8 @@
 
 #include "philo.h"
 
-static void	philo_sleep(t_master *master, int time_to_sleep, int id)
+static void	philo_sleep(t_master *master, unsigned int time_to_sleep, \
+						unsigned int id)
 {
 	t_philo	*philosopher;
 
@@ -25,7 +26,7 @@ static void	philo_sleep(t_master *master, int time_to_sleep, int id)
 	philosopher->is_sleeping = FALSE;
 }
 
-void	philo_think(t_philo *philosopher, int id)
+void	philo_think(t_philo *philosopher, unsigned int id)
 {
 	sem_wait(philosopher->message_sem);
 	print_message(philosopher, 4, id);
@@ -35,9 +36,9 @@ void	philo_think(t_philo *philosopher, int id)
 
 void	*routine(void *arg)
 {
-	int			id;
-	t_master	*master;
-	t_philo		*philosopher;
+	unsigned int	id;
+	t_master		*master;
+	t_philo			*philosopher;
 
 	master = (t_master *)arg;
 	id = master->philo_id;
@@ -56,7 +57,7 @@ void	*routine(void *arg)
 
 void	*the_master(t_master *master)
 {
-	int			i;
+	unsigned int	i;
 
 	i = 0;
 	master->philo_table[0]->master_sem = sem_open(master->master_sem_name, 0);

@@ -6,15 +6,15 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 15:12:05 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/13 11:00:18 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/09/26 18:27:50 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	philo_eat(t_master *master, t_philo *philosopher, int id)
+static void	philo_eat(t_master *master, t_philo *philosopher, unsigned int id)
 {
-	int			m_timestamp;
+	unsigned int	m_timestamp;
 
 	while (timestamp(master) <= philosopher->time_to_die)
 	{
@@ -41,7 +41,7 @@ static void	philo_eat(t_master *master, t_philo *philosopher, int id)
 	kill_philosopher(master, id);
 }
 
-void	go_to_table(t_master *master, int id)
+void	go_to_table(t_master *master, unsigned int id)
 {
 	t_philo		*philosopher;
 

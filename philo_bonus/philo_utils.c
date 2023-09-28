@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 15:50:10 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/09/26 17:18:20 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/09/26 18:38:34 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 		Converts the seconds into microseconds for same unit calculation.
 		Subtracts initial time to current time for current time stamp.
 */
-int	timestamp(void)
+unsigned int	timestamp(void)
 {
 	static long		ml_ini;
 	long			ml_cur;
@@ -37,9 +37,10 @@ int	timestamp(void)
 	[4] timestamp_in_ms X is thinking
 	[5] timestamp_in_ms X died
 */
-void	print_message(t_philo *philosopher, int message_id, int id)
+void	print_message(t_philo *philosopher, unsigned int message_id, \
+						unsigned int id)
 {
-	int	m_timestamp;
+	unsigned int	m_timestamp;
 
 	if (access_philosopher_status(philosopher, 0))
 	{
@@ -57,14 +58,16 @@ void	print_message(t_philo *philosopher, int message_id, int id)
 	}
 }
 
-void	wait_action(t_master *master, int id, int time_to_wait, int timestamp)
+void	wait_action(t_master *master, unsigned int id, \
+					unsigned int time_to_wait, \
+					unsigned int timestamp)
 {
 	t_philo			*philosopher;
 	unsigned int	wait_sum;
 
 	philosopher = master->philo_table[id];
 	wait_sum = timestamp + time_to_wait;
-	if (wait_sum > (unsigned int)philosopher->time_to_die)
+	if (wait_sum > philosopher->time_to_die)
 	{
 		usleep((philosopher->time_to_die - timestamp) * 1000);
 		kill_philosopher(master, id);
@@ -77,7 +80,7 @@ void	wait_action(t_master *master, int id, int time_to_wait, int timestamp)
  * status: 0 check if philosopher is alive
  * status: 1 set philosopher as dead
  * */
-int	access_philosopher_status(t_philo *philosopher, int status)
+int	access_philosopher_status(t_philo *philosopher, unsigned int status)
 {
 	int	result;
 
@@ -95,10 +98,10 @@ int	access_philosopher_status(t_philo *philosopher, int status)
 	return (result);
 }
 
-void	kill_philosopher(t_master *master, int id)
+void	kill_philosopher(t_master *master, unsigned int id)
 {
-	int		i;
-	t_philo	*philosopher;
+	unsigned int	i;
+	t_philo			*philosopher;
 
 	i = 0;
 	philosopher = master->philo_table[id];

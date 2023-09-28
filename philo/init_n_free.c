@@ -6,7 +6,7 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 15:23:18 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/05/10 15:28:15 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/09/26 18:29:16 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,17 @@
 
 void	free_master(t_master *master)
 {
-	int	i;
+	unsigned int	id;
 
-	i = 0;
-	while (i != master->number_of_philosophers)
-		free(master->philo_table[i++]);
+	id = 0;
+	while (id != master->number_of_philosophers)
+		free(master->philo_table[id++]);
 	free(master->philo_table);
-	i = 0;
-	while (i != master->number_of_philosophers)
+	id = 0;
+	while (id != master->number_of_philosophers)
 	{
-		pthread_mutex_destroy(&master->forks_table[i]->mutex_fork);
-		free(master->forks_table[i++]);
+		pthread_mutex_destroy(&master->forks_table[id]->mutex_fork);
+		free(master->forks_table[id++]);
 	}
 	free(master->forks_table);
 	pthread_mutex_destroy(&master->mutex_routine);
@@ -36,8 +36,8 @@ void	free_master(t_master *master)
 
 static void	forks_table_init(t_master *master)
 {
-	int		i;
-	int		number_of_forks;
+	unsigned int	i;
+	unsigned int	number_of_forks;
 
 	i = 0;
 	number_of_forks = master->number_of_philosophers;
@@ -55,8 +55,8 @@ static void	forks_table_init(t_master *master)
 
 static void	philo_table_init(t_master *master)
 {
-	int		i;
-	int		number_of_philosophers;
+	unsigned int	i;
+	unsigned int	number_of_philosophers;
 
 	i = 0;
 	number_of_philosophers = master->number_of_philosophers;
@@ -93,7 +93,7 @@ t_master	*master_init(char **argv)
 	master->time_to_die = ft_atoi(argv[2]);
 	master->time_to_eat = ft_atoi(argv[3]);
 	master->time_to_sleep = ft_atoi(argv[4]);
-	master->philo_id_temp = 0;
+	master->philo_id = 0;
 	if (argv[5])
 		master->number_of_times_each_philosopher_must_eat = ft_atoi(argv[5]);
 	else

@@ -6,13 +6,13 @@
 /*   By: bsilva-c <bsilva-c@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/10 16:10:12 by bsilva-c          #+#    #+#             */
-/*   Updated: 2023/09/21 16:03:52 by bsilva-c         ###   ########.fr       */
+/*   Updated: 2023/09/26 18:35:56 by bsilva-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	clean_the_forks(t_master *master, int id)
+void	clean_the_forks(t_master *master, unsigned int id)
 {
 	t_philo	*philosopher;
 
@@ -31,7 +31,7 @@ void	clean_the_forks(t_master *master, int id)
 	sem_post(philosopher->fork_sem);
 }
 
-static void	grab_the_fork(t_philo *philosopher, int id)
+static void	grab_the_fork(t_philo *philosopher, unsigned int id)
 {
 	sem_wait(philosopher->vigilante_sem);
 	if (!philosopher->is_full)
@@ -46,7 +46,7 @@ static void	grab_the_fork(t_philo *philosopher, int id)
 	sem_post(philosopher->vigilante_sem);
 }
 
-void	check_fork_status(t_philo *philosopher, int id)
+void	check_fork_status(t_philo *philosopher, unsigned int id)
 {
 	sem_wait(philosopher->m_fork_sem);
 	if (sem_wait(philosopher->fork_sem) == 0)
